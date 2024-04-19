@@ -2,7 +2,7 @@
 {
 	public class Model
 	{
-		private readonly Chunk[,,] m_Chunks;
+		public readonly Chunk[] Chunks;
 		
 		public readonly uint ChunksX;
 		public readonly uint ChunksY;
@@ -24,12 +24,12 @@
 			ChunksY = (uint)(sizeY / Constants.CHUNK_SIZE + (sizeY % Constants.CHUNK_SIZE == 0 ? 0 : 1));
 			ChunksZ = (uint)(sizeZ / Constants.CHUNK_SIZE + (sizeZ % Constants.CHUNK_SIZE == 0 ? 0 : 1));
 			
-			m_Chunks = new Chunk[ChunksX, ChunksY, ChunksZ];
+			Chunks = new Chunk[ChunksX * ChunksY * ChunksZ];
 			
 			for (uint x = 0; x < ChunksX; x++)
 				for (uint y = 0; y < ChunksY; y++)
 					for (uint z = 0; z < ChunksZ; z++)
-						m_Chunks[x, y, z] = new Chunk(x, y, z);
+						Chunks[GetChunkIndex(x, y, z)] = new Chunk(x, y, z);
 		}
 
 
@@ -44,12 +44,15 @@
 			
 			for (uint x = 0; x < ChunksX; x++)
 				for (uint y = 0; y < ChunksY; y++)
-					for (uint z = 0; z < ChunksZ; z++)
-						if (m_Chunks[x, y, z].IsEmpty())
-						{
-							m_Chunks[x, y, z] = null;
-							isDirty = true;
-						}
+				for (uint z = 0; z < ChunksZ; z++)
+				{
+					uint index = GetChunkIndex(x, y, z);
+					if (Chunks[index].IsEmpty())
+					{
+						Chunks[index] = null;
+						isDirty = true;
+					}
+				}
 			
 			if(isDirty)
 			{
@@ -66,7 +69,7 @@
 			for (uint j = 0; j < ChunksY; j++)
 			for (uint k = 0; k < ChunksZ; k++)
 			{
-				Chunk chunk = m_Chunks[i, j, k];
+				Chunk chunk = Chunks[GetChunkIndex(i, j, k)];
 				
 				if(chunk == null) 
 					continue;
@@ -75,7 +78,7 @@
 				for (uint y = 0; y < Constants.CHUNK_SIZE; y++)
 				for (uint z = 0; z < Constants.CHUNK_SIZE; z++)
 				{
-					Voxel voxel = chunk.Voxels[x, y, z];
+					Voxel voxel = chunk.GetVoxel(x, y, z);
 									
 					uint globalX = i * Constants.CHUNK_SIZE + x;
 					uint globalY = j * Constants.CHUNK_SIZE + y;
@@ -92,23 +95,18 @@
 
 			m_VoxelsNeighborsBuilded = true;
 		}
-		public Chunk GetChunk(uint x, uint y, uint z)
-		{
-			if (x >= ChunksX || y >= ChunksY || z >= ChunksZ)
-				return null;
-			
-			return m_Chunks[x, y, z];
-		}
+		public uint GetChunkIndex(uint x, uint y, uint z) => x + y * ChunksX + z * ChunksX * ChunksY;
 		public Voxel GetVoxel(uint globalX, uint globalY, uint globalZ)
 		{
 			uint chunkX = globalX / Constants.CHUNK_SIZE;
 			uint chunkY = globalY / Constants.CHUNK_SIZE;
 			uint chunkZ = globalZ / Constants.CHUNK_SIZE;
 			
-			if (chunkX >= ChunksX || chunkY >= ChunksY || chunkZ >= ChunksZ)
+			uint chunkIndex = GetChunkIndex(chunkX, chunkY, chunkZ);
+			if (chunkIndex >= Chunks.Length)
 				return null;
 
-			Chunk chunk = m_Chunks[chunkX, chunkY, chunkZ];
+			Chunk chunk = Chunks[chunkIndex];
 			if (chunk == null)
 				return null;
 			
@@ -116,7 +114,7 @@
 			uint localY = globalY % Constants.CHUNK_SIZE;
 			uint localZ = globalZ % Constants.CHUNK_SIZE;
 			
-			return chunk.Voxels[localX, localY, localZ];
+			return chunk.GetVoxel(localX, localY, localZ);
 		}
 	}
 }

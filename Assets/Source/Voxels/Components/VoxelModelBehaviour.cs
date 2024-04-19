@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Voxels.Core;
 using Random = UnityEngine.Random;
@@ -66,7 +65,7 @@ namespace Voxels.Components
 			for (uint y = 0; y < Model.ChunksY; y++)
 			for (uint z = 0; z < Model.ChunksZ; z++)
 			{
-				Chunk chunk = Model.GetChunk(x, y, z);
+				Chunk chunk = Model.Chunks[Model.GetChunkIndex(x, y, z)];
 				if (chunk == null)
 					continue;
 				

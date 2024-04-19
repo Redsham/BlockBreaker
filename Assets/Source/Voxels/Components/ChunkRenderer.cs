@@ -36,7 +36,7 @@ namespace Voxels.Components
 		private void OnDrawGizmos()
 		{
 			Vector3 size = Vector3.one * Constants.CHUNK_SIZE * Constants.VOXEL_SIZE;
-			Gizmos.DrawWireCube(transform.position + size / 2.0f, size);
+			Gizmos.DrawWireCube(transform.TransformPoint(size / 2.0f), size);
 		}
 		
 		public void Bind(Model model, Chunk chunk, float palette)
@@ -55,7 +55,7 @@ namespace Voxels.Components
 			for (uint y = 0; y < Constants.CHUNK_SIZE; y++)
 			for (uint z = 0; z < Constants.CHUNK_SIZE; z++)
 			{
-				Voxel voxel = Chunk.Voxels[x, y, z];
+				Voxel voxel = Chunk.GetVoxel(x, y, z);
 				
 				if (voxel.Type == VoxelType.Air)
 					continue;

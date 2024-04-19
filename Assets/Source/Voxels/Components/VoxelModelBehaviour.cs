@@ -16,7 +16,7 @@ namespace Voxels.Components
 		public Material Material { get; private set; }
 
 		
-		public void SetModel(Model model, ModelAsset.Color[] palette)
+		public void SetModel(Model model, Color32[] palette)
 		{
 			Model = model;
 			SetPalette(palette);
@@ -24,7 +24,7 @@ namespace Voxels.Components
 			ClearChunkRenderers();
 			CreateChunkRenderers();
 		}
-		private void SetPalette(ModelAsset.Color[] palette)
+		private void SetPalette(Color32[] palette)
 		{
 			if(m_Texture != null)
 				Destroy(m_Texture);
@@ -36,7 +36,7 @@ namespace Voxels.Components
 
 			for (int i = 0; i < palette.Length; i++)
 				for (int j = 0; j < Constants.NOISE_DEPTH; j++)
-					m_Texture.SetPixel(i, j, ((Color)new Color32(palette[i].R, palette[i].G, palette[i].B, 255)) * Random.Range(1.0f - Constants.NOISE_RANGE, 1.0f + Constants.NOISE_RANGE));
+					m_Texture.SetPixel(i, j, (Color)palette[i] * Random.Range(1.0f - Constants.NOISE_RANGE, 1.0f + Constants.NOISE_RANGE));
 			
 			m_Texture.Apply();
 

@@ -1,13 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using Utilities;
 using Voxels.Components;
 using Voxels.Core;
 using Debug = UnityEngine.Debug;
 
 namespace Voxels
 {
-	public static class Utilities
+	public static class VoxelsUtilities
 	{
 		public static Voxel Raycast(VoxelModelBehaviour voxelModelBehaviour, Ray ray)
 		{

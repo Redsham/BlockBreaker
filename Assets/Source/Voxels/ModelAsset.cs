@@ -1,33 +1,74 @@
 ﻿using UnityEngine;
+using Utilities;
 
 namespace Voxels
 {
 	public class ModelAsset
 	{
-		public Voxel[] Voxels;
-		public Color[] Palette;
+		public Voxel[] Voxels { get; private set; }
+		public Color32[] Palette { get; private set; }
+		
+		public uint Width { get; private set; }
+		public uint Height { get; private set; }
+		public uint Depth { get; private set; }
 		
 		
-		public (uint width, uint height, uint depth) GetSize()
+		
+		public static ModelAsset Deserialize(byte[] data)
 		{
-			uint width = 0;
-			uint height = 0;
-			uint depth = 0;
+			ModelAsset asset = new();
+			int offset = 0;
 			
-			foreach (Voxel voxel in Voxels)
+			#region Voxels
+
+			uint voxelCount = BinaryHelper.ReadUInt32(data, ref offset);
+			asset.Voxels = new Voxel[voxelCount];
+			
+			for (int i = 0; i < voxelCount; i++)
 			{
-				if (voxel.X > width)
-					width = voxel.X;
-				
-				if (voxel.Y > height)
-					height = voxel.Y;
-				
-				if (voxel.Z > depth)
-					depth = voxel.Z;
+				Voxel voxel = new()
+				{
+					X = BinaryHelper.ReadUInt32(data, ref offset),
+					Y = BinaryHelper.ReadUInt32(data, ref offset),
+					Z = BinaryHelper.ReadUInt32(data, ref offset),
+					ColorIndex = BinaryHelper.ReadByte(data, ref offset)
+				};
+
+				asset.Voxels[i] = voxel;
 			}
+
+			#endregion
+
+			#region Palette
+
+			uint colorCount = BinaryHelper.ReadUInt32(data, ref offset);
+			asset.Palette = new Color32[colorCount];
 			
-			return (width, height, depth);
+			for (int i = 0; i < colorCount; i++)
+			{
+				Color color = new()
+				{
+					r = BinaryHelper.ReadByte(data, ref offset),
+					g = BinaryHelper.ReadByte(data, ref offset),
+					b = BinaryHelper.ReadByte(data, ref offset)
+				};
+				
+				asset.Palette[i] = color;
+			}
+
+			#endregion
+
+			#region Dimensions
+
+			asset.Width = BinaryHelper.ReadUInt32(data, ref offset);
+			asset.Height = BinaryHelper.ReadUInt32(data, ref offset);
+			asset.Depth = BinaryHelper.ReadUInt32(data, ref offset);
+
+			#endregion
+			
+			return asset;
 		}
+		
 		
 		
 		[System.Serializable]
@@ -38,14 +79,6 @@ namespace Voxels
 			public uint Z;
 			
 			public byte ColorIndex;
-		}
-		
-		[System.Serializable]
-		public struct Color
-		{
-			public byte R;
-			public byte G;
-			public byte B;
 		}
 	}
 }

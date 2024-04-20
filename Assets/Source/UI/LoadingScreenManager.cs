@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -16,7 +17,9 @@ namespace UI
         [SerializeField] private float m_TextAnimationTime = 0.5f;
         
         private float m_TextAnimationTimer = 0.0f;
-        
+
+
+        private void Start() => Hide(true);
         private void Update()
         {
             UpdateText();
@@ -37,7 +40,7 @@ namespace UI
         }
         
         
-        public void Show() => m_Root.SetActive(true);
-        public void Hide() => m_Root.SetActive(false);
+        public void Show(bool forced) => m_Root.SetActive(true);
+        public void Hide(bool forced) => m_Root.SetActive(false);
     }
 }

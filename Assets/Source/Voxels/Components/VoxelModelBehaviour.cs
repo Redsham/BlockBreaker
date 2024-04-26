@@ -61,9 +61,9 @@ namespace Voxels.Components
 		}
 		private void CreateChunkRenderers()
 		{
-			for (uint x = 0; x < Model.ChunksX; x++)
-			for (uint y = 0; y < Model.ChunksY; y++)
-			for (uint z = 0; z < Model.ChunksZ; z++)
+			for (uint x = 0; x < Model.ChunksSize.X; x++)
+			for (uint y = 0; y < Model.ChunksSize.Y; y++)
+			for (uint z = 0; z < Model.ChunksSize.Z; z++)
 			{
 				Chunk chunk = Model.Chunks[Model.GetChunkIndex(x, y, z)];
 				if (chunk == null)
@@ -74,10 +74,7 @@ namespace Voxels.Components
 				Transform chunkTransform = chunkGameObject.transform;
 				chunkTransform.SetParent(transform);
 				chunkTransform.localRotation = Quaternion.identity;;
-				chunkTransform.localPosition = new Vector3(
-					chunk.X * Constants.CHUNK_SIZE * Constants.VOXEL_SIZE,
-					chunk.Y * Constants.CHUNK_SIZE * Constants.VOXEL_SIZE,
-					chunk.Z * Constants.CHUNK_SIZE * Constants.VOXEL_SIZE);
+				chunkTransform.localPosition = (Vector3)chunk.Location * Constants.CHUNK_SIZE * Constants.VOXEL_SIZE;
 				
 				ChunkRenderer chunkRenderer = chunkGameObject.AddComponent<ChunkRenderer>();
 				chunkRenderer.Bind(Model, chunk, m_Texture.width);

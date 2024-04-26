@@ -1,10 +1,7 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using UnityEngine;
-using Utilities;
 using Voxels.Components;
 using Voxels.Core;
-using Debug = UnityEngine.Debug;
 
 namespace Voxels
 {
@@ -12,9 +9,6 @@ namespace Voxels
 	{
 		public static Voxel Raycast(VoxelModelBehaviour voxelModelBehaviour, Ray ray)
 		{
-			Stopwatch stopwatch = Stopwatch.StartNew();
-			Debug.DrawLine(ray.origin, ray.GetPoint(100.0f), Color.yellow);
-			
 			Transform modelTransform = voxelModelBehaviour.transform;
 			Model model = voxelModelBehaviour.Model;
 			
@@ -32,8 +26,6 @@ namespace Voxels
 				if (!bounds.IntersectRay(ray, out float distance))
 					continue;
 				
-				DebugUtilities.DrawBounds(bounds, Color.red, 5.0f);
-				
 				intersectChunksData.Add((chunk, distance));
 			}
 			
@@ -43,6 +35,9 @@ namespace Voxels
 			// Перебор чанков
 			foreach ((Chunk chunk, _) in intersectChunksData)
 			{
+				Voxel intersectedVoxel = null;
+				float minDistance = float.MaxValue;
+				
 				for (uint x = 0; x < Constants.CHUNK_SIZE; x++)
 				for (uint y = 0; y < Constants.CHUNK_SIZE; y++)
 				for (uint z = 0; z < Constants.CHUNK_SIZE; z++)
@@ -51,36 +46,53 @@ namespace Voxels
 					if (voxel.Type == VoxelType.Air)
 						continue;
 					
-					Bounds bounds = GetVoxelBounds(x, y, z, modelTransform);
-					if (!bounds.IntersectRay(ray, out _))
+					Bounds bounds = GetVoxelBounds(chunk.GetGlobalVoxelCoordinates(x, y, z), modelTransform);
+					if (!bounds.IntersectRay(ray, out float distance))
 						continue;
-					
-					Debug.Log($"Raycast took {stopwatch.ElapsedMilliseconds} ms");
-					return voxel;
+
+					if (!(distance < minDistance))
+						continue;
+
+					minDistance = distance;
+					intersectedVoxel = voxel;
 				}
+
+				if (intersectedVoxel != null)
+					return intersectedVoxel;
 			}
 
-			Debug.Log($"Raycast took {stopwatch.ElapsedMilliseconds} ms");
 			return null;
 		}
-		
 		private static Bounds GetChunkBounds(Chunk chunk, Transform transform)
 		{
 			float chunkUnitsSize = Constants.CHUNK_SIZE * Constants.VOXEL_SIZE;
 			Vector3 localCenter = new Vector3(
-				(chunk.X + 0.5f) * chunkUnitsSize,
-				(chunk.Y + 0.5f) * chunkUnitsSize,
-				(chunk.Z + 0.5f) * chunkUnitsSize);
+				(chunk.Location.X + 0.5f) * chunkUnitsSize,
+				(chunk.Location.Y + 0.5f) * chunkUnitsSize,
+				(chunk.Location.Z + 0.5f) * chunkUnitsSize);
 			return new Bounds(localCenter, new Vector3(chunkUnitsSize, chunkUnitsSize, chunkUnitsSize));
 		}
-		private static Bounds GetVoxelBounds(uint x, uint y, uint z, Transform transform)
+		private static Bounds GetVoxelBounds(VoxelVector location, Transform transform)
 		{
 			float voxelUnitsSize = Constants.VOXEL_SIZE;
 			Vector3 localCenter = new Vector3(
-				(x + 0.5f) * voxelUnitsSize,
-				(y + 0.5f) * voxelUnitsSize,
-				(z + 0.5f) * voxelUnitsSize);
+				(location.X + 0.5f) * voxelUnitsSize,
+				(location.Y + 0.5f) * voxelUnitsSize,
+				(location.Z + 0.5f) * voxelUnitsSize);
 			return new Bounds(localCenter, new Vector3(voxelUnitsSize, voxelUnitsSize, voxelUnitsSize));
 		}
+		
+		
+		public static Vector3 GetVoxelWorldPosition(VoxelModelBehaviour voxelModelBehaviour, uint globalVoxelX, uint globalVoxelY, uint globalVoxelZ)
+		{
+			Transform modelTransform = voxelModelBehaviour.transform;
+			Model model = voxelModelBehaviour.Model;
+			
+			return modelTransform.TransformPoint(new Vector3(
+				(globalVoxelX + 0.5f) * Constants.VOXEL_SIZE,
+				(globalVoxelY + 0.5f) * Constants.VOXEL_SIZE,
+				(globalVoxelZ + 0.5f) * Constants.VOXEL_SIZE));
+		}
+		public static Vector3 GetVoxelWorldPosition(VoxelModelBehaviour voxelModelBehaviour, VoxelVector globalVoxelCoordinates) => GetVoxelWorldPosition(voxelModelBehaviour, globalVoxelCoordinates.X, globalVoxelCoordinates.Y, globalVoxelCoordinates.Z);
 	}
 }

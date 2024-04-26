@@ -6,7 +6,8 @@ namespace Gameplay.Gamemodes
 {
 	public class Antiquities : GamemodeBase
 	{
-		public override Model PrepareModel(ModelAsset asset) => throw new Exception();
-		public override void OnTap() => throw new Exception();
+		public override Model PrepareModel(ModelAsset asset) => throw new NotImplementedException();
+		public override void OnStart() => throw new NotImplementedException();
+		public override void OnTap() => throw new NotImplementedException();
 	}
 }

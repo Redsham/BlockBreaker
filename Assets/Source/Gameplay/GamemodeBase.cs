@@ -10,6 +10,7 @@ namespace Gameplay
 		
 		public virtual void Init(GamemodeHandler handler) => Handler = handler;
 		public abstract Model PrepareModel(ModelAsset asset);
+		public abstract void OnStart();
 		public abstract void OnTap();
 	}
 }

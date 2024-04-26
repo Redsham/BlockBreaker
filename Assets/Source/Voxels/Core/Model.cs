@@ -18,11 +18,17 @@
 		
 		public Model(uint sizeX, uint sizeY, uint sizeZ)
 		{
-			VoxelsSize = new VoxelVector(sizeX + 1, sizeY + 1, sizeZ + 1);
-			
-			VoxelsSize.X = (uint)(sizeX / Constants.CHUNK_SIZE + (sizeX % Constants.CHUNK_SIZE == 0 ? 0 : 1));
-			VoxelsSize.Y = (uint)(sizeY / Constants.CHUNK_SIZE + (sizeY % Constants.CHUNK_SIZE == 0 ? 0 : 1));
-			VoxelsSize.Z = (uint)(sizeZ / Constants.CHUNK_SIZE + (sizeZ % Constants.CHUNK_SIZE == 0 ? 0 : 1));
+			VoxelsSize = new VoxelVector(
+				sizeX + 1, 
+				sizeY + 1, 
+				sizeZ + 1
+			);
+
+			ChunksSize = new VoxelVector(
+				(uint)(sizeX / Constants.CHUNK_SIZE + (sizeX % Constants.CHUNK_SIZE == 0 ? 0 : 1)),
+				(uint)(sizeY / Constants.CHUNK_SIZE + (sizeY % Constants.CHUNK_SIZE == 0 ? 0 : 1)),
+				(uint)(sizeZ / Constants.CHUNK_SIZE + (sizeZ % Constants.CHUNK_SIZE == 0 ? 0 : 1))
+			);
 			
 			Chunks = new Chunk[ChunksSize.X * ChunksSize.Y * ChunksSize.Z];
 			
@@ -105,7 +111,7 @@
 		/// <param name="y"></param>
 		/// <param name="z"></param>
 		/// <returns></returns>
-		public uint GetChunkIndex(uint x, uint y, uint z) => x + y * ChunksSize.X + z * ChunksSize.Y * ChunksSize.Z;
+		public uint GetChunkIndex(uint x, uint y, uint z) => x + y * ChunksSize.X + z * ChunksSize.X * ChunksSize.Y;
 		/// <summary>
 		/// Получение индекса чанка по его координатам
 		/// </summary>

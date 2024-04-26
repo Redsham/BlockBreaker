@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEngine.Networking;
 
-namespace RemoteResources
+namespace RemoteResources.Downloadings
 {
 	public class TextureDownloading : Downloading
 	{

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using UnityEngine;
 using UnityEngine.Networking;
 using Utilities;
 
@@ -7,30 +8,38 @@ namespace RemoteResources
 {
 	public class Downloading : IDisposable
 	{
-		public event Action<bool> OnDownloaded;
-		public byte[] Data => m_WebRequest.downloadHandler.data;
-		
-		
-		private readonly UnityWebRequest m_WebRequest;
+		public event Action<bool> OnComplete;
+		public byte[] Data => WebRequest.downloadHandler.data;
+		public bool IsComplete { get; private set; }
+		public bool IsSuccessful { get; private set; }
+		protected UnityWebRequest WebRequest { get; }
 		
 		
 		public Downloading(string url)
 		{
-			m_WebRequest = UnityWebRequest.Get(url);
+			WebRequest = UnityWebRequest.Get(url);
 			CoroutineProvider.Start(DownloadRoutine());
 		}
+		
 		private IEnumerator DownloadRoutine()
 		{
-			yield return m_WebRequest.SendWebRequest();
+			yield return WebRequest.SendWebRequest();
 
-			if (m_WebRequest.result == UnityWebRequest.Result.Success)
+			if (WebRequest.result == UnityWebRequest.Result.Success)
 			{
-				OnDownloaded?.Invoke(true);
+				OnSuccessfulDownloaded();
+
+				IsComplete = true;
+				IsSuccessful = true;
+				OnComplete?.Invoke(true);
 				yield break;
 			}
-			
-			OnDownloaded?.Invoke(false);
+
+			IsComplete = true;
+			OnComplete?.Invoke(false);
+			Debug.LogError($"Download error: {WebRequest.error}");
 		}
-		public void Dispose() => m_WebRequest.Dispose();
+		protected virtual void OnSuccessfulDownloaded() { }
+		public void Dispose() => WebRequest.Dispose();
 	}
 }

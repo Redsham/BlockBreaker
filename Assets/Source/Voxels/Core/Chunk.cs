@@ -23,13 +23,15 @@
 		public Voxel GetVoxel(uint x, uint y, uint z) => Voxels[GetVoxelIndex(x, y, z)];
 		public bool IsEmpty()
 		{
-			for (uint i = 0; i < Constants.CHUNK_SIZE; i++)
-				for (uint j = 0; j < Constants.CHUNK_SIZE; j++)
-					for (uint k = 0; k < Constants.CHUNK_SIZE; k++)
-						if (GetVoxel(i, j, k).Type != VoxelType.Air)
+			for (uint x = 0; x < Constants.CHUNK_SIZE; x++)
+				for (uint y = 0; y < Constants.CHUNK_SIZE; y++)
+					for (uint z = 0; z < Constants.CHUNK_SIZE; z++)
+						if (GetVoxel(x, y, z).Type != VoxelType.Air)
 							return false;
 			
 			return true;
 		}
+
+		public override string ToString() => $"Chunk({X}, {Y}, {Z})";
 	}
 }

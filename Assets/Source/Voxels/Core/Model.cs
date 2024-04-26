@@ -4,15 +4,33 @@
 	{
 		public readonly Chunk[] Chunks;
 		
+		/// <summary>
+		/// Размер модели в чанках по оси X
+		/// </summary>
 		public readonly uint ChunksX;
+		/// <summary>
+		/// Размер модели в чанках по оси Y
+		/// </summary>
 		public readonly uint ChunksY;
+		/// <summary>
+		/// Размер модели в чанках по оси Z
+		/// </summary>
 		public readonly uint ChunksZ;
 
+		/// <summary>
+		/// Размер модели в вокселях по оси X
+		/// </summary>
 		public readonly uint SizeX;
+		/// <summary>
+		/// Размер модели в вокселях по оси Y
+		/// </summary>
 		public readonly uint SizeY;
+		/// <summary>
+		/// Размер модели в вокселях по оси Z
+		/// </summary>
 		public readonly uint SizeZ;
 
-		private bool m_VoxelsNeighborsBuilded;
+		private bool m_VoxelsNeighborsBuilt;
 
 		public Model(uint sizeX, uint sizeY, uint sizeZ)
 		{
@@ -56,13 +74,13 @@
 			
 			if(isDirty)
 			{
-				m_VoxelsNeighborsBuilded = false;
+				m_VoxelsNeighborsBuilt = false;
 				BuildVoxelsNeighbors();
 			}
 		}
 		public void BuildVoxelsNeighbors()
 		{
-			if(m_VoxelsNeighborsBuilded)
+			if(m_VoxelsNeighborsBuilt)
 				return;
 			
 			for (uint i = 0; i < ChunksX; i++)
@@ -93,7 +111,7 @@
 				}
 			}
 
-			m_VoxelsNeighborsBuilded = true;
+			m_VoxelsNeighborsBuilt = true;
 		}
 		public uint GetChunkIndex(uint x, uint y, uint z) => x + y * ChunksX + z * ChunksX * ChunksY;
 		public Voxel GetVoxel(uint globalX, uint globalY, uint globalZ)

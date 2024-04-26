@@ -17,5 +17,7 @@ namespace Voxels.Core
 			Chunk = chunk;
 			NoiseIndex = (byte)Random.Range(0, Constants.NOISE_DEPTH);
 		}
+
+		public override string ToString() => $"Voxel({Type}, {ColorIndex})";
 	}
 }

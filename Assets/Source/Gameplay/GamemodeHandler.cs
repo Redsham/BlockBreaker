@@ -1,23 +1,31 @@
-﻿using System;
-using UnityEngine;
-using Voxels;
+﻿using UnityEngine;
 using Voxels.Components;
 
 namespace Gameplay
 {
 	public class GamemodeHandler : MonoBehaviour
 	{
+		public static Session Session { get; set; }
+		
 		public GamemodeBase Gamemode { get; private set; }
 		public VoxelModelBehaviour Model => m_ModelBehaviour;
+		public PlayerController PlayerController => m_PlayerController;
 		
 		[SerializeField] private VoxelModelBehaviour m_ModelBehaviour;
-			
-		
-		public void Init(GamemodeBase gamemode)
+		[SerializeField] private PlayerController m_PlayerController;
+
+
+		private void Start()
 		{
-			Gamemode = gamemode;
-			Gamemode.Init(this);
+			InitGamemode(Session);
+			m_PlayerController.OnTap.AddListener(() => Gamemode.OnTap());
 		}
-		public void SetModel(ModelAsset asset) => Model.SetModel(Gamemode.PrepareModel(asset), asset.Palette);
+		private void InitGamemode(Session session)
+		{
+			Gamemode = session.Gamemode;
+			Gamemode.Init(this);
+			
+			Model.SetModel(Gamemode.PrepareModel(session.Model), session.Model.Palette);
+		}
 	}
 }

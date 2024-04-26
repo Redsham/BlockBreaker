@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
-using Utilities;
 using Voxels.Components;
 using Voxels.Core;
 using Debug = UnityEngine.Debug;
@@ -32,8 +31,6 @@ namespace Voxels
 				if (!bounds.IntersectRay(ray, out float distance))
 					continue;
 				
-				DebugUtilities.DrawBounds(bounds, Color.red, 5.0f);
-				
 				intersectChunksData.Add((chunk, distance));
 			}
 			
@@ -43,6 +40,9 @@ namespace Voxels
 			// Перебор чанков
 			foreach ((Chunk chunk, _) in intersectChunksData)
 			{
+				Voxel intersectedVoxel = null;
+				float minDistance = float.MaxValue;
+				
 				for (uint x = 0; x < Constants.CHUNK_SIZE; x++)
 				for (uint y = 0; y < Constants.CHUNK_SIZE; y++)
 				for (uint z = 0; z < Constants.CHUNK_SIZE; z++)
@@ -51,16 +51,21 @@ namespace Voxels
 					if (voxel.Type == VoxelType.Air)
 						continue;
 					
-					Bounds bounds = GetVoxelBounds(x, y, z, modelTransform);
-					if (!bounds.IntersectRay(ray, out _))
+					Bounds bounds = GetVoxelBounds(chunk.X * Constants.CHUNK_SIZE + x, chunk.Y * Constants.CHUNK_SIZE + y, chunk.Z * Constants.CHUNK_SIZE + z, modelTransform);
+					if (!bounds.IntersectRay(ray, out float distance))
 						continue;
-					
-					Debug.Log($"Raycast took {stopwatch.ElapsedMilliseconds} ms");
-					return voxel;
+
+					if (!(distance < minDistance))
+						continue;
+
+					minDistance = distance;
+					intersectedVoxel = voxel;
 				}
+
+				if (intersectedVoxel != null)
+					return intersectedVoxel;
 			}
 
-			Debug.Log($"Raycast took {stopwatch.ElapsedMilliseconds} ms");
 			return null;
 		}
 		

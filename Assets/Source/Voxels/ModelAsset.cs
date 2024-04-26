@@ -48,9 +48,9 @@ namespace Voxels
 			{
 				Color color = new()
 				{
-					r = BinaryHelper.ReadByte(data, ref offset),
-					g = BinaryHelper.ReadByte(data, ref offset),
-					b = BinaryHelper.ReadByte(data, ref offset)
+					r = BinaryHelper.ReadByte(data, ref offset) / 255.0f,
+					g = BinaryHelper.ReadByte(data, ref offset) / 255.0f,
+					b = BinaryHelper.ReadByte(data, ref offset) / 255.0f
 				};
 				
 				asset.Palette[i] = color;
@@ -68,9 +68,8 @@ namespace Voxels
 			
 			return asset;
 		}
-		
-		
-		
+		public override string ToString() => $"ModelAsset(Size: {Width}x{Height}x{Depth} | Voxels: {Voxels.Length} | Palette: {Palette.Length})";
+
 		[System.Serializable]
 		public struct Voxel
 		{

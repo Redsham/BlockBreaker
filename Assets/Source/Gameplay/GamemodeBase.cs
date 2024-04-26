@@ -13,5 +13,6 @@ namespace Gameplay
 			Handler = handler;
 		}
 		public abstract Model PrepareModel(ModelAsset asset);
+		public abstract void OnTap();
 	}
 }

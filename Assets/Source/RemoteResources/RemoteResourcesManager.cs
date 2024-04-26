@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
+using RemoteResources.Downloadings;
 using UnityEngine;
 
 namespace RemoteResources
@@ -6,6 +8,7 @@ namespace RemoteResources
 	public static class RemoteResourcesManager
 	{
 		public const string STORAGE_URL = "https://raw.githubusercontent.com/Redsham/BlockBreaker/resources/";
+		public const string MODELS_DIRECTORY = "models/";
 		
 		
 		public static RemoteResourcesHeader Header { get; private set; }
@@ -18,7 +21,7 @@ namespace RemoteResources
 			
 			Downloading downloading = new(STORAGE_URL + "header.json");
 			
-			downloading.OnDownloaded += successful =>
+			downloading.OnComplete += successful =>
 			{
 				if(!successful)
 					return;
@@ -31,6 +34,19 @@ namespace RemoteResources
 			
 			return downloading;
 		}
-		public static Downloading RequestModel(string modelName) => new(STORAGE_URL + modelName);
+		public static ModelDownloading RequestModel(string modelName)
+		{
+			if (Header == null)
+				throw new Exception("You can't load resources before the header.");
+			
+			return new(STORAGE_URL + MODELS_DIRECTORY + modelName + "/model.bbmodel");
+		}
+		public static TextureDownloading RequestThumbnail(string modelName)
+		{
+			if (Header == null)
+				throw new Exception("You can't load resources before the header.");
+			
+			return new(STORAGE_URL + MODELS_DIRECTORY + modelName + "/thumbnail.png");
+		}
 	}
 }

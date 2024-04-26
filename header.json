@@ -1,6 +1,6 @@
 {
-  "Version": "0.0.2v",
+  "Version": "0.0.3v",
   "Models": [
-    "cars"
+    "police_car"
   ]
 }

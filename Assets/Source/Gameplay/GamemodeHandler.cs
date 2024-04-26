@@ -11,7 +11,7 @@ namespace Gameplay
 		public static Session Session { get; set; }
 		
 		public GamemodeBase Gamemode { get; private set; }
-		public VoxelModelBehaviour Model => m_ModelBehaviour;
+		public VoxelModelBehaviour ModelBehaviour => m_ModelBehaviour;
 		public PlayerController PlayerController => m_PlayerController;
 		
 		[SerializeField] private VoxelModelBehaviour m_ModelBehaviour;
@@ -28,7 +28,9 @@ namespace Gameplay
 			Gamemode = session.Gamemode;
 			Gamemode.Init(this);
 			
-			Model.SetModel(Gamemode.PrepareModel(session.Model), session.Model.Palette);
+			ModelBehaviour.SetModel(Gamemode.PrepareModel(session.Model), session.Model.Palette);
+			
+			Gamemode.OnStart();
 		}
 	}
 }

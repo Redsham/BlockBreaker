@@ -12,6 +12,17 @@ namespace Gameplay
 		public Camera Camera { get; private set; }
 		public Transform Transform { get; private set; }
 		
+		public Vector2 Origin
+		{
+			get => m_Origin;
+			set
+			{
+				m_Origin = value;
+				m_Offset = Vector3.zero;
+				ApplyTransform();
+			}
+		}
+
 		private Vector2 m_Origin;
 		private Vector2 m_Direction;
 		private Vector3 m_Offset;
@@ -26,6 +37,15 @@ namespace Gameplay
 			Transform = transform;
 		}
 		private void Update()
+		{
+			MobileInput();
+			DesktopInput();
+		}
+		private void DesktopInput()
+		{
+			// TODO: Добавить обработку ввода для комрьютеров
+		}
+		private void MobileInput()
 		{
 			int touchCount = Input.touchCount;
 			switch (touchCount)

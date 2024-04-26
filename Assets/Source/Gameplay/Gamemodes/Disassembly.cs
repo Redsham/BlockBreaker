@@ -27,11 +27,15 @@ namespace Gameplay.Gamemodes
 
 			return model;
 		}
+		public override void OnStart()
+		{
+			Handler.PlayerController.Origin = (Vector3)Handler.ModelBehaviour.Model.VoxelsSize / 2.0f;
+		}
 		public override void OnTap()
 		{
 			// Создание луча
 			Ray ray = Handler.PlayerController.Camera.ScreenPointToRay(Input.GetTouch(0).position);
-			Voxel voxel = VoxelsUtilities.Raycast(Handler.Model, ray);
+			Voxel voxel = VoxelsUtilities.Raycast(Handler.ModelBehaviour, ray);
 			
 			// Проверка на попадание в воксель
 			if (voxel == null)
@@ -48,7 +52,7 @@ namespace Gameplay.Gamemodes
 			
 			// Обновление чанков
 			foreach (Chunk chunk in chunks)
-				Handler.Model.GetRendererByChunk(chunk).Rebuild();
+				Handler.ModelBehaviour.GetRendererByChunk(chunk).Rebuild();
 		}
 	}
 }

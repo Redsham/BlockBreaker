@@ -1,5 +1,6 @@
 using System.Collections;
 using RemoteResources;
+using RemoteResources.Data;
 using RemoteResources.Downloadings;
 using UnityEngine;
 using UnityEngine.Events;
@@ -27,18 +28,18 @@ namespace UI.Home
 		}
 		public void OnPointerDown(PointerEventData eventData) => OnClick.Invoke();
 		
-		public void BindModel(string id, MetaResource meta)
+		public void BindModel(string id, ModelMeta modelMeta)
 		{
 			ModelID = id;
 			
-			if (ColorUtility.TryParseHtmlString(meta.Color, out Color color))
+			if (ColorUtility.TryParseHtmlString(modelMeta.Color, out Color color))
 				m_Background.color = color;
 
 			StartCoroutine(LoadThumbnail());
 		}
 		private IEnumerator LoadThumbnail()
 		{
-			TextureDownloading textureDownloading = RemoteResourcesManager.RequestThumbnail(ModelID);
+			TextureDownloading textureDownloading = RemoteResourcesManager.RequestModelThumbnail(ModelID);
 			m_Indicator.gameObject.SetActive(true);
 			while (!textureDownloading.IsComplete)
 			{

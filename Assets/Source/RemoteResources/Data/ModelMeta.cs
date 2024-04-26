@@ -1,6 +1,6 @@
-namespace RemoteResources
+namespace RemoteResources.Data
 {
-	public struct MetaResource
+	public struct ModelMeta
 	{
 		public string Color;
 		public int    Cost;

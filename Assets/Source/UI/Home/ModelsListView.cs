@@ -1,5 +1,6 @@
 using System.Collections;
 using RemoteResources;
+using RemoteResources.Data;
 using RemoteResources.Downloadings;
 using UnityEngine;
 using UnityEngine.Events;
@@ -34,16 +35,16 @@ namespace UI.Home
 
 			foreach (string model in RemoteResourcesManager.Header.Models)
 			{
-				MetaDownloading metaDownloading = RemoteResourcesManager.RequestMeta(model);
+				MetaDownloading metaDownloading = RemoteResourcesManager.RequestModelMeta(model);
 				yield return new WaitUntil(() => metaDownloading.IsComplete);
-				CreateModel(model, metaDownloading.Meta);
+				CreateModel(model, metaDownloading.ModelMeta);
 			}
 		}
 
-		private void CreateModel(string id, MetaResource meta)
+		private void CreateModel(string id, ModelMeta modelMeta)
 		{
 			ModelAdapterView adapter = Instantiate(m_ModelTemplate, m_Container);
-			adapter.BindModel(id, meta);
+			adapter.BindModel(id, modelMeta);
 			adapter.OnClick.AddListener(() => { OnClick.Invoke(id); });
 		}
 	}

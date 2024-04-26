@@ -8,7 +8,9 @@ namespace Gameplay
 	public class PlayerController : MonoBehaviour
 	{
 		public UnityEvent OnTap = new UnityEvent();
+		
 		public Camera Camera { get; private set; }
+		public Transform Transform { get; private set; }
 		
 		private Vector2 m_Origin;
 		private Vector2 m_Direction;
@@ -17,9 +19,11 @@ namespace Gameplay
 		
 		private Vector2 m_TouchStartPos;
 
+		
 		private void Awake()
 		{
 			Camera = Camera.main;
+			Transform = transform;
 		}
 		private void Update()
 		{
@@ -45,14 +49,17 @@ namespace Gameplay
 							m_Direction += delta;
 							m_Direction.y = Mathf.Clamp(m_Direction.y, -90.0f, 90.0f);
 						
-							UpdateTransform();
+							ApplyTransform();
 							break;
 						}
 						case TouchPhase.Ended:
 						{
 							Vector2 delta = touch.position - m_TouchStartPos;
-							if (Math.Abs(delta.x) < 10.0f && Math.Abs(delta.y) < 10.0f && !EventSystem.current.IsPointerOverGameObject())
+							
+							// Если палец не двигался и не нажал на UI, то это тап
+							if (delta.magnitude < 10.0f && !EventSystem.current.IsPointerOverGameObject())
 								OnTap.Invoke();
+							
 							break;
 						}
 					}
@@ -74,7 +81,7 @@ namespace Gameplay
 						m_Distance += deltaMagnitude / Mathf.Min(Screen.width, Screen.height) * 10.0f;
 						m_Distance = Mathf.Clamp(m_Distance, 0.5f, 10.0f);
 						
-						UpdateTransform();
+						ApplyTransform();
 					}
 				
 					// Перемещение
@@ -83,17 +90,17 @@ namespace Gameplay
 					Vector2 delta = center - prevCenter;
 					delta.x = delta.x / Screen.width * m_Distance;
 					delta.y = delta.y / Screen.width * m_Distance;
-					m_Offset -= transform.right * delta.x + transform.up * delta.y;
+					m_Offset -= Transform.right * delta.x + Transform.up * delta.y;
 					
-					UpdateTransform();
+					ApplyTransform();
 					break;
 				}
 			}
 		}
-		private void UpdateTransform()
+		private void ApplyTransform()
 		{
-			transform.rotation = Quaternion.Euler(m_Direction.y, m_Direction.x, 0.0f);
-			transform.position = transform.forward * -m_Distance + m_Offset;
+			Transform.rotation = Quaternion.Euler(m_Direction.y, m_Direction.x, 0.0f);
+			Transform.position = Transform.forward * -m_Distance + m_Offset;
 		}
 	}
 }

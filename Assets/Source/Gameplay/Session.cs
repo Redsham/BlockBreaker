@@ -4,8 +4,8 @@ namespace Gameplay
 {
 	public class Session
 	{
-		public GamemodeBase Gamemode { get; }
-		public ModelAsset   Model { get; }
+		public readonly GamemodeBase Gamemode;
+		public readonly ModelAsset   Model;
 		
 		public Session(GamemodeBase gamemode, ModelAsset model)
 		{

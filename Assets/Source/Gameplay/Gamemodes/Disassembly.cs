@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Utilities;
 using Voxels;
 using Voxels.Core;
 
@@ -23,18 +22,22 @@ namespace Gameplay.Gamemodes
 			}
 			
 			// Применение изменений
-			model.Apply();
+			model.CleanUpEmptyChunks();
+			model.BuildVoxelsNeighbors();
 
 			return model;
 		}
 		public override void OnTap()
 		{
+			// Создание луча
 			Ray ray = Handler.PlayerController.Camera.ScreenPointToRay(Input.GetTouch(0).position);
 			Voxel voxel = VoxelsUtilities.Raycast(Handler.Model, ray);
 			
+			// Проверка на попадание в воксель
 			if (voxel == null)
 				return;
 			
+			// Удаление вокселя
 			voxel.Type = VoxelType.Air;
 			
 			// Получение затронутых чанков

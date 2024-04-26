@@ -5,6 +5,9 @@ namespace Gameplay
 {
 	public class GamemodeHandler : MonoBehaviour
 	{
+		/// <summary>
+		/// Текущая сессия игры
+		/// </summary>
 		public static Session Session { get; set; }
 		
 		public GamemodeBase Gamemode { get; private set; }

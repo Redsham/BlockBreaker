@@ -1,12 +1,13 @@
+using RemoteResources.Data;
 using UnityEngine;
 
 namespace RemoteResources.Downloadings
 {
 	public class MetaDownloading : Downloading
 	{
-		public MetaResource Meta { get; private set; }
+		public ModelMeta ModelMeta { get; private set; }
 		public MetaDownloading(string url) : base(url) { }
 
-		protected override void OnSuccessfulDownloaded() => Meta = JsonUtility.FromJson<MetaResource>(WebRequest.downloadHandler.text);
+		protected override void OnSuccessfulDownloaded() => ModelMeta = JsonUtility.FromJson<ModelMeta>(WebRequest.downloadHandler.text);
 	}
 }

@@ -5,15 +5,37 @@ namespace Voxels
 {
 	public class ModelAsset
 	{
+		/// <summary>
+		/// Воксели модели
+		/// </summary>
 		public Voxel[] Voxels { get; private set; }
+		/// <summary>
+		/// Палитра цветов модели
+		/// </summary>
 		public Color32[] Palette { get; private set; }
 		
+		/// <summary>
+		/// Размер модели по оси X в вокселях
+		/// </summary>
 		public uint Width { get; private set; }
+		/// <summary>
+		/// Размер модели по оси Y в вокселях
+		/// </summary>
 		public uint Height { get; private set; }
+		/// <summary>
+		/// Размер модели по оси Z в вокселях
+		/// </summary>
 		public uint Depth { get; private set; }
 		
 		
+		public override string ToString() => $"ModelAsset(Size: {Width}x{Height}x{Depth} | Voxels: {Voxels.Length} | Palette: {Palette.Length})";
 		
+		
+		/// <summary>
+		/// Десериализация модели из байтового массива
+		/// </summary>
+		/// <param name="data"></param>
+		/// <returns></returns>
 		public static ModelAsset Deserialize(byte[] data)
 		{
 			ModelAsset asset = new();
@@ -68,7 +90,7 @@ namespace Voxels
 			
 			return asset;
 		}
-		public override string ToString() => $"ModelAsset(Size: {Width}x{Height}x{Depth} | Voxels: {Voxels.Length} | Palette: {Palette.Length})";
+		
 
 		[System.Serializable]
 		public struct Voxel

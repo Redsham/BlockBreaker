@@ -1,0 +1,17 @@
+{
+    "name": "RemoteResources",
+    "rootNamespace": "",
+    "references": [
+        "GUID:af6178c5e0cf68b479a95ebecbcdad45",
+        "GUID:16a35160f69fa0f4aae65d2480d23a20"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

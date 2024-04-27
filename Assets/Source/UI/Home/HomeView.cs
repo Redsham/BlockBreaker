@@ -12,7 +12,11 @@ namespace UI.Home
 	{
 		[SerializeField] private ModelsListView m_ModelsView;
 
-		private void Start() => StartCoroutine(Initialization());
+		private void Start()
+		{
+			Application.targetFrameRate = 60;
+			StartCoroutine(Initialization());
+		}
 		
 		private IEnumerator Initialization()
 		{

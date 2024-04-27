@@ -153,7 +153,7 @@ namespace Gameplay
 					float deltaMagnitude = prevMagnitude - magnitude;
 					if (Math.Abs(deltaMagnitude) > 0.0f)
 					{
-						m_Distance += deltaMagnitude / Mathf.Min(Screen.width, Screen.height) * 10.0f;
+						m_Distance += deltaMagnitude / Mathf.Min(Screen.width, Screen.height) * 5.0f;
 						m_Distance = Mathf.Clamp(m_Distance, 0.5f, 10.0f);
 						
 						ApplyTransform();

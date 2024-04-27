@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using Voxels.Components;
 
 namespace Gameplay
@@ -13,6 +14,8 @@ namespace Gameplay
 		public GamemodeBase Gamemode { get; private set; }
 		public VoxelModelBehaviour ModelBehaviour => m_ModelBehaviour;
 		public PlayerController PlayerController => m_PlayerController;
+		
+		public UnityEvent<float> OnProgressChanged;
 		
 		[SerializeField] private VoxelModelBehaviour m_ModelBehaviour;
 		[SerializeField] private PlayerController m_PlayerController;
@@ -29,6 +32,7 @@ namespace Gameplay
 			Gamemode.Init(this);
 			
 			ModelBehaviour.SetModel(Gamemode.PrepareModel(session.Model), session.Model.Palette);
+			Gamemode.OnProgressChanged += OnProgressChanged.Invoke;
 			
 			Gamemode.OnStart();
 		}

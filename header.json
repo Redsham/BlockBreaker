@@ -2,11 +2,11 @@
   "Version": "0.0.3v",
   "Models": [
     {
-      "Path": "police_car",
+      "Id": "police_car",
       "Version": 0
     },
     {
-      "Path": "civilian_car",
+      "Id": "civilian_car",
       "Version": 0
     }
   ]

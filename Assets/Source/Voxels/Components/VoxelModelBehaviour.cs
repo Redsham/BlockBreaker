@@ -9,11 +9,13 @@ namespace Voxels.Components
 	{
 		private static readonly int Shader_MainTex = Shader.PropertyToID("_BaseMap");
 
-		private readonly Dictionary<Chunk, ChunkRenderer> m_Renderers = new();
-		private Texture2D m_Texture;
-
 		public Model Model { get; private set; }
 		public Material Material { get; private set; }
+
+		[SerializeField] private Shader m_Shader;
+		
+		private readonly Dictionary<Chunk, ChunkRenderer> m_Renderers = new();
+		private Texture2D m_Texture;
 
 		
 		public void SetModel(Model model, Color32[] palette)
@@ -43,7 +45,7 @@ namespace Voxels.Components
 
 			if (Material == null)
 			{
-				Material = new Material(Shader.Find("Universal Render Pipeline/Unlit"));
+				Material = new Material(m_Shader);
 				
 				foreach (ChunkRenderer chunkRenderer in m_Renderers.Values)
 					chunkRenderer.MeshRenderer.sharedMaterial = Material;

@@ -19,12 +19,37 @@ namespace Gameplay
 			{
 				m_Origin = value;
 				m_Offset = Vector3.zero;
-				ApplyTransform();
+				m_Bounds.center = m_Origin;
 			}
 		}
-
+		public Vector3 Offset
+		{
+			get => m_Offset;
+			set
+			{
+				m_Offset = value;
+				m_Offset.x = Mathf.Clamp(m_Offset.x, -m_Bounds.extents.x, m_Bounds.extents.x);
+				m_Offset.y = Mathf.Clamp(m_Offset.y, -m_Bounds.extents.y, m_Bounds.extents.y);
+				m_Offset.z = Mathf.Clamp(m_Offset.z, -m_Bounds.extents.z, m_Bounds.extents.z);
+			}
+		}
+		public Bounds Bounds
+		{
+			get => m_Bounds;
+			set
+			{
+				m_Bounds = value;
+				m_Origin = m_Bounds.center;
+				
+				m_Offset.x = Mathf.Clamp(m_Offset.x, -m_Bounds.extents.x, m_Bounds.extents.x);
+				m_Offset.y = Mathf.Clamp(m_Offset.y, -m_Bounds.extents.y, m_Bounds.extents.y);
+			}
+		}
+		
+		private Bounds  m_Bounds;
 		private Vector3 m_Origin;
 		private Vector2 m_Direction;
+		private Vector2 m_SmoothedDirection;
 		private Vector3 m_Offset;
 		private float m_Distance = 1.0f;
 		
@@ -45,8 +70,25 @@ namespace Gameplay
 			#if UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR
 			MobileInput();
 			#endif
+
+			m_SmoothedDirection.x = Mathf.LerpAngle(m_SmoothedDirection.x, m_Direction.x, Time.unscaledDeltaTime * 25.5f);
+			m_SmoothedDirection.y = Mathf.LerpAngle(m_SmoothedDirection.y, m_Direction.y, Time.unscaledDeltaTime * 25.5f);
+
+			Quaternion rotation = Quaternion.Euler(m_SmoothedDirection.y, m_SmoothedDirection.x, 0.0f);
+			Transform.SetPositionAndRotation(
+				rotation * Vector3.forward * -m_Distance + m_Origin + m_Offset,
+				rotation
+			);
 		}
-		
+		private void OnDrawGizmosSelected()
+		{
+			Gizmos.color = Color.green;
+			Gizmos.DrawWireCube(m_Bounds.center, m_Bounds.size);
+			
+			Gizmos.color = Color.magenta;
+			Gizmos.DrawSphere(m_Origin + m_Offset, 0.1f);
+		}
+
 		private void DesktopInput()
 		{
 			// Тап
@@ -69,8 +111,6 @@ namespace Gameplay
 				
 				m_Direction += delta;
 				m_Direction.y = Mathf.Clamp(m_Direction.y, -90.0f, 90.0f);
-				
-				ApplyTransform();
 			}
 			
 			// Перемещение камеры
@@ -83,9 +123,8 @@ namespace Gameplay
 				
 				delta.x = delta.x / Screen.width * m_Distance;
 				delta.y = delta.y / Screen.width * m_Distance;
-				m_Offset -= Transform.right * delta.x + Transform.up * delta.y;
 				
-				ApplyTransform();
+				Offset -= Transform.right * delta.x + Transform.up * delta.y;
 			}
 			
 			// Приближение/удаление
@@ -93,8 +132,6 @@ namespace Gameplay
 			{
 				m_Distance -= Input.mouseScrollDelta.y * 0.25f;
 				m_Distance = Mathf.Clamp(m_Distance, 0.5f, 10.0f);
-				
-				ApplyTransform();
 			}
 		}
 		private void MobileInput()
@@ -120,8 +157,7 @@ namespace Gameplay
 							delta.y = -delta.y / Screen.width * 180.0f;
 							m_Direction += delta;
 							m_Direction.y = Mathf.Clamp(m_Direction.y, -90.0f, 90.0f);
-						
-							ApplyTransform();
+							
 							break;
 						}
 						case TouchPhase.Ended:
@@ -155,8 +191,6 @@ namespace Gameplay
 					{
 						m_Distance += deltaMagnitude / Mathf.Min(Screen.width, Screen.height) * 5.0f;
 						m_Distance = Mathf.Clamp(m_Distance, 0.5f, 10.0f);
-						
-						ApplyTransform();
 					}
 				
 					// Перемещение
@@ -165,18 +199,12 @@ namespace Gameplay
 					Vector2 delta = center - prevCenter;
 					delta.x = delta.x / Screen.width * m_Distance;
 					delta.y = delta.y / Screen.width * m_Distance;
-					m_Offset -= Transform.right * delta.x + Transform.up * delta.y;
 					
-					ApplyTransform();
+					Offset -= Transform.right * delta.x + Transform.up * delta.y;
+					
 					break;
 				}
 			}
-		}
-		
-		private void ApplyTransform()
-		{
-			Transform.rotation = Quaternion.Euler(m_Direction.y, m_Direction.x, 0.0f);
-			Transform.position = Transform.forward * -m_Distance + m_Origin + m_Offset;
 		}
 	}
 }

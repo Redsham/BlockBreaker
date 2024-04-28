@@ -11,11 +11,11 @@ namespace Voxels.Components
 
 		public Model Model { get; private set; }
 		public Material Material { get; private set; }
-
-		[SerializeField] private Shader m_Shader;
 		
 		private readonly Dictionary<Chunk, ChunkRenderer> m_Renderers = new();
 		private Texture2D m_Texture;
+		
+		[SerializeField] private Shader m_Shader;
 
 		
 		public void SetModel(Model model, Color32[] palette)
@@ -86,5 +86,13 @@ namespace Voxels.Components
 			}
 		}
 		public ChunkRenderer GetRendererByChunk(Chunk chunk) => m_Renderers.TryGetValue(chunk, out ChunkRenderer chunkRenderer) ? chunkRenderer : null;
+		
+		public Bounds GetBounds()
+		{
+			Vector3 size = (Vector3)Model.VoxelsSize * Constants.VOXEL_SIZE;
+			Bounds bounds = new Bounds(size / 2.0f, size);
+			bounds.center = transform.TransformPoint(bounds.center);
+			return bounds;
+		}
 	}
 }

@@ -34,6 +34,7 @@ namespace Gameplay.Gamemodes
 		}
 		public override void OnStart()
 		{
+			Handler.PlayerController.Bounds = Handler.ModelBehaviour.GetBounds();
 			Handler.PlayerController.Origin = (Vector3)Handler.ModelBehaviour.Model.VoxelsSize * Constants.VOXEL_SIZE / 2.0f;
 		}
 		public override void OnTap()

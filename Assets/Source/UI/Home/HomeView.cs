@@ -3,6 +3,9 @@ using Gameplay;
 using Gameplay.Gamemodes;
 using RemoteResources;
 using RemoteResources.Downloadings;
+using UI.Dialogs;
+using UI.Dialogs.Core;
+using UI.Dialogs.Implementations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,7 +15,11 @@ namespace UI.Home
 	{
 		[SerializeField] private ModelsListView m_ModelsView;
 
-		private void Start() => StartCoroutine(Initialization());
+		private void Start()
+		{
+			Application.targetFrameRate = 60;
+			StartCoroutine(Initialization());
+		}
 		
 		private IEnumerator Initialization()
 		{
@@ -22,6 +29,10 @@ namespace UI.Home
 				Downloading headerDownloading = RemoteResourcesManager.RequestHeader();
 				yield return new WaitUntil(() => headerDownloading.IsComplete);
 				LoadingScreenManager.Hide();
+
+				DialogsManager.ShowDialog<AlertBox>("Downloading", headerDownloading.IsSuccessful
+					? "Header loaded successfully"
+					: "Header loading failed");
 			}
 
 			m_ModelsView.Fill();

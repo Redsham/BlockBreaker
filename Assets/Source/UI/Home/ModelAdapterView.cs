@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace UI.Home
 {
-	public class ModelAdapterView : MonoBehaviour, IPointerDownHandler
+	public class ModelAdapterView : MonoBehaviour, IPointerClickHandler
 	{
 		[SerializeField] private Image m_Background;
 		[SerializeField] private RawImage m_Model;
@@ -26,7 +26,7 @@ namespace UI.Home
 			m_Model.enabled = false;
 			m_Indicator.gameObject.SetActive(false);
 		}
-		public void OnPointerDown(PointerEventData eventData) => OnClick.Invoke();
+		public void OnPointerClick(PointerEventData eventData) => OnClick.Invoke();
 		
 		public void BindModel(string id, ModelMeta modelMeta)
 		{

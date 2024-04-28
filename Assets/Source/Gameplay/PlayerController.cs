@@ -7,12 +7,12 @@ namespace Gameplay
 {
 	public class PlayerController : MonoBehaviour
 	{
-		public UnityEvent OnTap = new UnityEvent();
+		public UnityEvent OnTap = new();
+		public Vector2 TapScreenPosition { get; private set; }
 		
 		public Camera Camera { get; private set; }
 		public Transform Transform { get; private set; }
-		
-		public Vector2 Origin
+		public Vector3 Origin
 		{
 			get => m_Origin;
 			set
@@ -23,7 +23,7 @@ namespace Gameplay
 			}
 		}
 
-		private Vector2 m_Origin;
+		private Vector3 m_Origin;
 		private Vector2 m_Direction;
 		private Vector3 m_Offset;
 		private float m_Distance = 1.0f;
@@ -38,12 +38,64 @@ namespace Gameplay
 		}
 		private void Update()
 		{
-			MobileInput();
+			#if UNITY_EDITOR || UNITY_STANDALONE
 			DesktopInput();
+			#endif
+			
+			#if UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR
+			MobileInput();
+			#endif
 		}
+		
 		private void DesktopInput()
 		{
-			// TODO: Добавить обработку ввода для комрьютеров
+			// Тап
+			if (Input.GetMouseButtonDown(0))
+			{
+				TapScreenPosition = Input.mousePosition;
+				OnTap.Invoke();
+			}
+			
+			// Поворот камеры
+			if (Input.GetMouseButtonDown(1))
+				m_TouchStartPos = Input.mousePosition;
+			else if (Input.GetMouseButton(1))
+			{
+				Vector2 delta = (Vector2)Input.mousePosition - m_TouchStartPos;
+				m_TouchStartPos = Input.mousePosition;
+				
+				delta.x = delta.x / Screen.width * 180.0f;
+				delta.y = -delta.y / Screen.width * 180.0f;
+				
+				m_Direction += delta;
+				m_Direction.y = Mathf.Clamp(m_Direction.y, -90.0f, 90.0f);
+				
+				ApplyTransform();
+			}
+			
+			// Перемещение камеры
+			if (Input.GetMouseButtonDown(2))
+				m_TouchStartPos = Input.mousePosition;
+			else if (Input.GetMouseButton(2))
+			{
+				Vector2 delta = (Vector2)Input.mousePosition - m_TouchStartPos;
+				m_TouchStartPos = Input.mousePosition;
+				
+				delta.x = delta.x / Screen.width * m_Distance;
+				delta.y = delta.y / Screen.width * m_Distance;
+				m_Offset -= Transform.right * delta.x + Transform.up * delta.y;
+				
+				ApplyTransform();
+			}
+			
+			// Приближение/удаление
+			if (Input.mouseScrollDelta.y != 0.0f)
+			{
+				m_Distance -= Input.mouseScrollDelta.y * 0.25f;
+				m_Distance = Mathf.Clamp(m_Distance, 0.5f, 10.0f);
+				
+				ApplyTransform();
+			}
 		}
 		private void MobileInput()
 		{
@@ -78,7 +130,10 @@ namespace Gameplay
 							
 							// Если палец не двигался и не нажал на UI, то это тап
 							if (delta.magnitude < 10.0f && !EventSystem.current.IsPointerOverGameObject())
+							{
+								TapScreenPosition = touch.position;
 								OnTap.Invoke();
+							}
 							
 							break;
 						}
@@ -98,7 +153,7 @@ namespace Gameplay
 					float deltaMagnitude = prevMagnitude - magnitude;
 					if (Math.Abs(deltaMagnitude) > 0.0f)
 					{
-						m_Distance += deltaMagnitude / Mathf.Min(Screen.width, Screen.height) * 10.0f;
+						m_Distance += deltaMagnitude / Mathf.Min(Screen.width, Screen.height) * 5.0f;
 						m_Distance = Mathf.Clamp(m_Distance, 0.5f, 10.0f);
 						
 						ApplyTransform();
@@ -117,10 +172,11 @@ namespace Gameplay
 				}
 			}
 		}
+		
 		private void ApplyTransform()
 		{
 			Transform.rotation = Quaternion.Euler(m_Direction.y, m_Direction.x, 0.0f);
-			Transform.position = Transform.forward * -m_Distance + m_Offset;
+			Transform.position = Transform.forward * -m_Distance + m_Origin + m_Offset;
 		}
 	}
 }

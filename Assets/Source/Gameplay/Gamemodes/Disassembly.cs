@@ -7,6 +7,9 @@ namespace Gameplay.Gamemodes
 {
 	public class Disassembly : GamemodeBase
 	{
+		private uint m_BreakableVoxelsCount;
+		private uint m_BrokenVoxelsCount;
+		
 		public override Model PrepareModel(ModelAsset asset)
 		{
 			// Создание модели
@@ -19,6 +22,8 @@ namespace Gameplay.Gamemodes
 				
 				voxel.Type = VoxelType.Breakable;
 				voxel.ColorIndex = assetVoxel.ColorIndex;
+				
+				m_BreakableVoxelsCount++;
 			}
 			
 			// Применение изменений
@@ -29,12 +34,12 @@ namespace Gameplay.Gamemodes
 		}
 		public override void OnStart()
 		{
-			Handler.PlayerController.Origin = (Vector3)Handler.ModelBehaviour.Model.VoxelsSize / 2.0f;
+			Handler.PlayerController.Origin = (Vector3)Handler.ModelBehaviour.Model.VoxelsSize * Constants.VOXEL_SIZE / 2.0f;
 		}
 		public override void OnTap()
 		{
 			// Создание луча
-			Ray ray = Handler.PlayerController.Camera.ScreenPointToRay(Input.GetTouch(0).position);
+			Ray ray = Handler.PlayerController.Camera.ScreenPointToRay(Handler.PlayerController.TapScreenPosition);
 			Voxel voxel = VoxelsUtilities.Raycast(Handler.ModelBehaviour, ray);
 			
 			// Проверка на попадание в воксель
@@ -43,6 +48,10 @@ namespace Gameplay.Gamemodes
 			
 			// Удаление вокселя
 			voxel.Type = VoxelType.Air;
+			
+			// Обновление прогресса
+			m_BrokenVoxelsCount++;
+			Progress = (float)m_BrokenVoxelsCount / m_BreakableVoxelsCount;
 			
 			// Получение затронутых чанков
 			HashSet<Chunk> chunks = new(6);

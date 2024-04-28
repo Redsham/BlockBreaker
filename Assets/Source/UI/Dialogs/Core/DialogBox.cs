@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
-namespace UI.Dialogs
+namespace UI.Dialogs.Core
 {
 	public abstract class DialogBox : MonoBehaviour
 	{
@@ -25,6 +26,7 @@ namespace UI.Dialogs
 		{
 			// TODO: Анимация появления
 			Root.SetActive(true);
+			LayoutRebuilder.ForceRebuildLayoutImmediate(RootTransform);
 			IsVisible = true;
 			OnShow.Invoke();
 		}

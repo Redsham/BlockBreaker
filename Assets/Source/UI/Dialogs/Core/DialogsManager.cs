@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace UI.Dialogs
+namespace UI.Dialogs.Core
 {
 	public static class DialogsManager
 	{
@@ -14,6 +14,8 @@ namespace UI.Dialogs
 			Templates = new Dictionary<Type, DialogBox>();
 			foreach (DialogBox dialogBox in Resources.LoadAll<DialogBox>("UI/Dialogs"))
 				Templates.Add(dialogBox.GetType(), dialogBox);
+			
+			Debug.Log($"DialogsManager initialized with {Templates.Count} templates.");
 		}
 
 		/// <summary>
@@ -26,6 +28,7 @@ namespace UI.Dialogs
 			
 			if(Templates.TryGetValue(type, out DialogBox dialogBox))
 				return dialogBox;
+			
 			throw new Exception($"DialogBox template for type {type} not found.");
 		}
 		/// <summary>
@@ -33,7 +36,7 @@ namespace UI.Dialogs
 		/// </summary>
 		public static T CreateDialog<T>() where T : DialogBox
 		{
-			T dialogBox = (T)Object.Instantiate(Templates[typeof(T)], DialogsContainer.Active.Root);
+			T dialogBox = (T)Object.Instantiate(GetTemplate<T>(), DialogsContainer.Active.Root);
 			dialogBox.Initialize();
 			return dialogBox;
 		}

@@ -3,6 +3,9 @@ using Gameplay;
 using Gameplay.Gamemodes;
 using RemoteResources;
 using RemoteResources.Downloadings;
+using UI.Dialogs;
+using UI.Dialogs.Core;
+using UI.Dialogs.Implementations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -26,6 +29,10 @@ namespace UI.Home
 				Downloading headerDownloading = RemoteResourcesManager.RequestHeader();
 				yield return new WaitUntil(() => headerDownloading.IsComplete);
 				LoadingScreenManager.Hide();
+
+				DialogsManager.ShowDialog<AlertBox>("Downloading", headerDownloading.IsSuccessful
+					? "Header loaded successfully"
+					: "Header loading failed");
 			}
 
 			m_ModelsView.Fill();

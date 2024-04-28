@@ -1,7 +1,13 @@
 {
   "Version": "0.0.3v",
   "Models": [
-    "police_car",
-    "civilian_car"
+    {
+      "Path": "police_car",
+      "Version": 0
+    },
+    {
+      "Path": "civilian_car",
+      "Version": 0
+    }
   ]
 }

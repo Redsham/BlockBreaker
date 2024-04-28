@@ -1,39 +1,56 @@
+using System;
+using System.Collections.Generic;
 using TMPro;
 using UI.Dialogs.Core;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI.Dialogs.Implementations
 {
 	public class AlertBox : DialogBox
 	{
-		[SerializeField] private TextMeshProUGUI m_TitleText;
-		[SerializeField] private TextMeshProUGUI m_BodyText;
+		[SerializeField] private TextMeshProUGUI     m_TitleText;
+		[SerializeField] private TextMeshProUGUI     m_BodyText;
+		[SerializeField] private Image               m_Icon;
+		[SerializeField] private Button              m_Button;
 		
-		public override void Show(object[] args)
+		[Header("Styles")]
+		[SerializeField] private List<AlertBoxStyle> m_Styles;
+
+		public void Show(string title, string body, string style)
 		{
-			switch (args.Length)
+			SetStyle(style);
+			
+			m_TitleText.text = title;
+			m_BodyText.text = body;
+
+			Show(null);
+		}
+		
+		private void SetStyle(string styleName)
+		{
+			AlertBoxStyle style = m_Styles.Find(s => s.Name == styleName);
+
+			bool hasIcon = style.Icon != null;
+			m_Icon.transform.parent.gameObject.SetActive(hasIcon);
+			if (hasIcon)
 			{
-				case 1:
-					if (args[0] is not string)
-						throw new System.ArgumentException("Invalid argument type passed to the dialog.");
-
-					m_TitleText.gameObject.SetActive(false);
-					m_BodyText.text = (string)args[0];
-					break;
-				
-				case 2:
-					if (args[0] is not string || args[1] is not string)
-						throw new System.ArgumentException("Invalid argument type passed to the dialog.");
-
-					m_TitleText.text = (string)args[0];
-					m_BodyText.text = (string)args[1];
-					break;
-				
-				default:
-					throw new System.ArgumentException("Invalid argument passed to the dialog.");
+				m_Icon.sprite = style.Icon;
+				m_Icon.color = style.MainColor;
 			}
 			
-			base.Show(args);
+			m_Button.image.color = style.MainColor;
+			
+			m_TitleText.horizontalAlignment = hasIcon ? HorizontalAlignmentOptions.Center : HorizontalAlignmentOptions.Left;
+			m_BodyText.horizontalAlignment  = hasIcon ? HorizontalAlignmentOptions.Center : HorizontalAlignmentOptions.Left;
+		}
+		
+		[System.Serializable]
+		public struct AlertBoxStyle
+		{
+			public string Name;
+			public Sprite Icon;
+			public Color  MainColor;
 		}
 	}
 }

@@ -7,6 +7,7 @@ namespace UI.Dialogs.Core
 {
 	public abstract class DialogBox : MonoBehaviour
 	{
+		[Header("Events")]
 		public UnityEvent OnShow = new();
 		public UnityEvent OnHide = new();
 		public UnityEvent OnClose = new();
@@ -15,6 +16,7 @@ namespace UI.Dialogs.Core
 		public RectTransform RootTransform { get; private set; }
 		public bool IsVisible { get; private set; }
 		
+		[Header("Components")]
 		[SerializeField] protected Image Background;
 		[SerializeField] protected CanvasGroup Content;
 		

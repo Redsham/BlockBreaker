@@ -30,9 +30,14 @@ namespace UI.Home
 				yield return new WaitUntil(() => headerDownloading.IsComplete);
 				LoadingScreenManager.Hide();
 
-				DialogsManager.ShowDialog<AlertBox>("Downloading", headerDownloading.IsSuccessful
-					? "Header loaded successfully"
-					: "Header loading failed");
+				AlertBox alertBox = DialogsManager.CreateDialog<AlertBox>();
+				if (headerDownloading.IsSuccessful)
+					alertBox.Show("Success", "Header downloaded successfully. Loading models...", "Success");
+				else
+				{
+					alertBox.Show("Error", "Header downloading failed", "Error");
+					alertBox.OnClose.AddListener(() => Application.Quit());
+				}
 			}
 
 			m_ModelsView.Fill();

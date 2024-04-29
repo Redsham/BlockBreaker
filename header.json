@@ -3,11 +3,11 @@
   "Models": [
     {
       "Id": "police_car",
-      "Version": 0
+      "Version": 1
     },
     {
       "Id": "civilian_car",
-      "Version": 0
+      "Version": 1
     }
   ]
 }

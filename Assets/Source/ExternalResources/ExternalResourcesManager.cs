@@ -8,10 +8,14 @@ using Voxels;
 
 namespace ExternalResources
 {
+	/// <summary>
+	/// Внешние ресурсы - это ресурсы, которые не входят в состав приложения и загружаются из внешних источников, в конкретном случае с репозитория на GitHub.
+	/// На практике вместо репозитория на GitHub может быть любой другой источник данных, например, сервер с базой данных.
+	/// </summary>
 	public static class ExternalResourcesManager
 	{
-		public static readonly LocalStorage  Local = new();
-		public static readonly RemoteStorage Remote = new();
+		private static readonly LocalStorage  Local = new();
+		private static readonly RemoteStorage Remote = new();
 		
 		public static bool OfflineMode { get; private set; }
 		public static bool IsReady => Local.IsReady && (OfflineMode || Remote.IsReady);

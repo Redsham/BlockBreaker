@@ -75,6 +75,7 @@ namespace UI.Home
 				alertBox.Show("Error", error, "Error");
 			});
 			
+			// Ожидание завершения загрузки
 			yield return new WaitWhile(() => modelDownloading);
 			if (!isSuccessful)
 				yield break;

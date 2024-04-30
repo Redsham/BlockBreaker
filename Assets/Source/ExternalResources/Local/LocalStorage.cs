@@ -70,14 +70,18 @@ namespace ExternalResources.Local
 			string path = GetAbsolutePath("models", id, "meta.json");
 			if(File.Exists(path))
 			{
+				ModelMeta meta = new();
+				
 				try
 				{
-					callback?.Invoke(ModelMeta.FromJson(File.ReadAllText(path, Encoding.UTF8)));
+					meta = ModelMeta.FromJson(File.ReadAllText(path, Encoding.UTF8));
 				}
 				catch(Exception e)
 				{
 					errorCallback?.Invoke("Failed to load meta.");
 				}
+				
+				callback?.Invoke(meta);
 			}
 			else
 				errorCallback?.Invoke("Meta file not found.");
@@ -87,14 +91,18 @@ namespace ExternalResources.Local
 			string path = GetAbsolutePath("models", id, "model.bbmodel");
 			if(File.Exists(path))
 			{
+				ModelAsset asset = null;
+				
 				try
 				{
-					callback?.Invoke(ModelAsset.Deserialize(File.ReadAllBytes(path)));
+					asset = ModelAsset.Deserialize(File.ReadAllBytes(path));
 				}
 				catch(Exception e)
 				{
 					errorCallback?.Invoke("Failed to load asset.");
 				}
+				
+				callback?.Invoke(asset);
 			}
 			else
 				errorCallback?.Invoke("Asset file not found.");
@@ -104,16 +112,18 @@ namespace ExternalResources.Local
 			string path = GetAbsolutePath("models", id, "thumbnail.png");
 			if(File.Exists(path))
 			{
+				Texture2D texture = new Texture2D(0, 0);
+				
 				try
 				{
-					Texture2D texture = new Texture2D(0, 0);
 					texture.LoadImage(File.ReadAllBytes(path));
-					callback?.Invoke(texture);
 				}
 				catch(Exception e)
 				{
 					errorCallback?.Invoke("Failed to load thumbnail.");
 				}
+				
+				callback?.Invoke(texture);
 			}
 			else
 				errorCallback?.Invoke("Thumbnail file not found.");

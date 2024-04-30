@@ -1,7 +1,5 @@
-using System.Collections;
-using RemoteResources;
-using RemoteResources.Data;
-using RemoteResources.Downloadings;
+using ExternalResources;
+using ExternalResources.Data;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -12,40 +10,28 @@ namespace UI.Home
 		[SerializeField] private RectTransform m_Container;
 		[SerializeField] private ModelAdapterView m_ModelTemplate;
 
-		public UnityEvent<string> OnClick;
+		public UnityEvent<Model> OnClick;
 
 		public void Fill()
 		{
-			// Загрузка оффлайн моделей
-			StartCoroutine(LoadOfflineModels());
-			
-			// Загрузка онлайн моделей
-			StartCoroutine(LoadOnlineModels());
-		}
-
-		private IEnumerator LoadOfflineModels()
-		{
-			// TODO: Сделать загрузку оффлайн моделей
-			yield break;
-		}
-		private IEnumerator LoadOnlineModels()
-		{
-			if(!RemoteResourcesManager.IsReady)
-				yield break;
-
-			foreach (string model in RemoteResourcesManager.Header.Models)
+			foreach (Model model in ExternalResourcesManager.Models)
 			{
-				MetaDownloading metaDownloading = RemoteResourcesManager.RequestModelMeta(model);
-				yield return new WaitUntil(() => metaDownloading.IsComplete);
-				CreateModel(model, metaDownloading.ModelMeta);
+				ExternalResourcesManager.LoadModelMeta(model.Id, meta =>
+				{
+					if(!ExternalResourcesManager.OfflineMode || ExternalResourcesManager.IsModelAvailable(model.Id))
+						CreateModel(model, meta);
+				}, error =>
+				{
+					Debug.LogError($"Model meta loading failed: {error}");
+				});
 			}
 		}
 
-		private void CreateModel(string id, ModelMeta modelMeta)
+		private void CreateModel(Model model, ModelMeta modelMeta)
 		{
 			ModelAdapterView adapter = Instantiate(m_ModelTemplate, m_Container);
-			adapter.BindModel(id, modelMeta);
-			adapter.OnClick.AddListener(() => { OnClick.Invoke(id); });
+			adapter.BindModel(model, modelMeta);
+			adapter.OnClick.AddListener(() => { OnClick.Invoke(model); });
 		}
 	}
 }

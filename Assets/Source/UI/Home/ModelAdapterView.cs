@@ -1,7 +1,5 @@
-using System.Collections;
-using RemoteResources;
-using RemoteResources.Data;
-using RemoteResources.Downloadings;
+using ExternalResources;
+using ExternalResources.Data;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -16,7 +14,7 @@ namespace UI.Home
 		[SerializeField] private RectTransform m_Indicator;
 		[SerializeField] private Texture2D m_PlaceholderTexture;
 
-		public string ModelID { get; private set; }
+		public Model Model { get; private set; }
 		
 		public UnityEvent OnClick;
 
@@ -28,29 +26,30 @@ namespace UI.Home
 		}
 		public void OnPointerClick(PointerEventData eventData) => OnClick.Invoke();
 		
-		public void BindModel(string id, ModelMeta modelMeta)
+		public void BindModel(Model model, ModelMeta modelMeta)
 		{
-			ModelID = id;
+			Model = model;
 			
 			if (ColorUtility.TryParseHtmlString(modelMeta.Color, out Color color))
 				m_Background.color = color;
 
-			StartCoroutine(LoadThumbnail());
+			LoadThumbnail();
 		}
-		private IEnumerator LoadThumbnail()
+		private void LoadThumbnail()
 		{
-			TextureDownloading textureDownloading = RemoteResourcesManager.RequestModelThumbnail(ModelID);
-			m_Indicator.gameObject.SetActive(true);
-			while (!textureDownloading.IsComplete)
-			{
-				m_Indicator.Rotate(0.0f, 0.0f, -90.0f * Time.deltaTime);
-				yield return null;
-			}
-
-			m_Model.texture = textureDownloading.IsSuccessful ? textureDownloading.Texture : m_PlaceholderTexture;
+			LeanTween.rotateAround(m_Indicator, Vector3.forward, 360f, 1f).setLoopClamp();
 			
-			m_Model.enabled = true;
-			m_Indicator.gameObject.SetActive(false);
+			ExternalResourcesManager.LoadModelThumbnail(Model.Id, texture =>
+			{
+				m_Model.texture = texture;
+				m_Model.enabled = true;
+				m_Indicator.gameObject.SetActive(false);
+			}, error =>
+			{
+				m_Model.texture = m_PlaceholderTexture;
+				m_Model.enabled = true;
+				m_Indicator.gameObject.SetActive(false);
+			});
 		}
 	}
 }

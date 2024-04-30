@@ -1,5 +1,5 @@
 {
-    "name": "RemoteResources",
+    "name": "ExternalResources",
     "rootNamespace": "",
     "references": [
         "GUID:af6178c5e0cf68b479a95ebecbcdad45",

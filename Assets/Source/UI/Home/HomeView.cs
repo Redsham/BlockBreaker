@@ -1,13 +1,13 @@
 using System.Collections;
+using ExternalResources;
+using ExternalResources.Data;
 using Gameplay;
 using Gameplay.Gamemodes;
-using RemoteResources;
-using RemoteResources.Downloadings;
-using UI.Dialogs;
 using UI.Dialogs.Core;
 using UI.Dialogs.Implementations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Voxels;
 
 namespace UI.Home
 {
@@ -23,49 +23,64 @@ namespace UI.Home
 		
 		private IEnumerator Initialization()
 		{
-			if (!RemoteResourcesManager.IsReady)
+			if (!ExternalResourcesManager.IsReady)
 			{
 				LoadingScreenManager.Show();
-				Downloading headerDownloading = RemoteResourcesManager.RequestHeader();
-				yield return new WaitUntil(() => headerDownloading.IsComplete);
+				ExternalResourcesManager.Prepare();
+				yield return new WaitUntil(() => ExternalResourcesManager.IsReady);
 				LoadingScreenManager.Hide();
-
+				
 				AlertBox alertBox = DialogsManager.CreateDialog<AlertBox>();
-				if (headerDownloading.IsSuccessful)
-					alertBox.Show("Success", "Header downloaded successfully. Loading models...", "Success");
+				if (!ExternalResourcesManager.OfflineMode)
+					alertBox.Show("Success", "Remote storage header downloaded. Ready to use.", "Success");
 				else
-				{
-					alertBox.Show("Error", "Header downloading failed", "Error");
-					alertBox.OnClose.AddListener(() => Application.Quit());
-				}
+					alertBox.Show("Error", "No internet connection. Using only local storage.", "Error");
 			}
 
 			m_ModelsView.Fill();
 		}
 
-		public void SelectModel(string id)
+		public void SelectModel(Model model)
 		{
-			StartCoroutine(OpenModelProcess(id));
+			StartCoroutine(OpenModelProcess(model));
 		}
-		private IEnumerator OpenModelProcess(string id)
+		private IEnumerator OpenModelProcess(Model modelId)
 		{
-			if(!RemoteResourcesManager.IsReady)
+			if(ExternalResourcesManager.OfflineMode && !ExternalResourcesManager.IsModelAvailable(modelId.Id))
+			{
+				AlertBox alertBox = DialogsManager.CreateDialog<AlertBox>();
+				alertBox.Show("Error", "Model is not available in offline mode.", "Error");
 				yield break;
+			}
 			
 			LoadingScreenManager.Show();
 
 			// Скачивание модели
-			ModelDownloading modelDownloading = RemoteResourcesManager.RequestModel(id);
-			yield return new WaitUntil(() => modelDownloading.IsComplete);
-
-			if (!modelDownloading.IsSuccessful)
+			bool isSuccessful = false;
+			bool modelDownloading = true;
+			ModelAsset modelAsset = null;
+			
+			ExternalResourcesManager.LoadModelAsset(modelId.Id, callback =>
 			{
-				Debug.LogError("Model downloading failed");
+				modelAsset = callback;
+				modelDownloading = false;
+				isSuccessful = true;
+			}, error =>
+			{
+				modelDownloading = false;
+				isSuccessful = false;
+				
+				LoadingScreenManager.Hide();
+				AlertBox alertBox = DialogsManager.CreateDialog<AlertBox>();
+				alertBox.Show("Error", error, "Error");
+			});
+			
+			yield return new WaitWhile(() => modelDownloading);
+			if (!isSuccessful)
 				yield break;
-			}
 			
 			// Создание сессии
-			Session session = new Session(new Disassembly(), modelDownloading.Model);
+			Session session = new Session(new Disassembly(), modelAsset);
 			GamemodeHandler.Session = session;
 			
 			// Загрузка сцены

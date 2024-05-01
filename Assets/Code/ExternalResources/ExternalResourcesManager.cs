@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using Bootstrapping;
 using ExternalResources.Data;
 using ExternalResources.Local;
 using ExternalResources.Remote;
@@ -27,11 +29,25 @@ namespace ExternalResources
 		/// </summary>
 		public static IEnumerable<Model> Models => IsReady ? (OfflineMode ? Local.Models : Remote.Models) : Array.Empty<Model>();
 		
+		
+		
+		[BootstrapMethod]
+		public static IEnumerator Bootstrap()
+		{
+			Prepare();
+			yield return new WaitUntil(() => IsReady);
+		}
+		
+		
+		
 		/// <summary>
 		/// Подготовка к работе с внешними ресурсами.
 		/// </summary>
 		public static void Prepare()
 		{
+			if(IsReady)
+				return;
+			
 			// Подготовка локального хранилища
 			Local.Prepare(() =>
 			{

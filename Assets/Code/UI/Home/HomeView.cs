@@ -42,7 +42,7 @@ namespace UI.Home
 
 		public void SelectModel(Model model)
 		{
-			StartCoroutine(OpenModelProcess(model));
+			//StartCoroutine(OpenModelProcess(model));
 		}
 		private IEnumerator OpenModelProcess(Model modelId)
 		{

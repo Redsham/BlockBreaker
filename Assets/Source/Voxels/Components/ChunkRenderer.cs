@@ -28,7 +28,10 @@ namespace Voxels.Components
 			MeshFilter = gameObject.AddComponent<MeshFilter>();
 			MeshRenderer = gameObject.AddComponent<MeshRenderer>();
 		
-			Mesh = new Mesh();
+			Mesh = new Mesh
+			{
+				name = "Chunk Mesh"
+			};
 			MeshFilter.mesh = Mesh;
 		}
 		private void OnDestroy() => Destroy(Mesh);

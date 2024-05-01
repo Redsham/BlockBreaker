@@ -67,11 +67,12 @@ namespace Voxels
 			
 			for (int i = 0; i < colorCount; i++)
 			{
-				Color color = new()
+				Color32 color = new()
 				{
-					r = BinaryHelper.ReadByte(data, ref offset) / 255.0f,
-					g = BinaryHelper.ReadByte(data, ref offset) / 255.0f,
-					b = BinaryHelper.ReadByte(data, ref offset) / 255.0f
+					r = BinaryHelper.ReadByte(data, ref offset),
+					g = BinaryHelper.ReadByte(data, ref offset),
+					b = BinaryHelper.ReadByte(data, ref offset),
+					a = 255
 				};
 				
 				asset.Palette[i] = color;

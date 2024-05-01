@@ -11,10 +11,12 @@ namespace Voxels.Components
 
 		public Model Model { get; private set; }
 		public Material Material { get; private set; }
+		public Color32[] Palette { get; private set; }
 		
 		private readonly Dictionary<Chunk, ChunkRenderer> m_Renderers = new();
 		private Texture2D m_Texture;
-		
+
+		[SerializeField] private bool m_ColliderEnabled;
 		[SerializeField] private Shader m_Shader;
 
 		
@@ -28,6 +30,8 @@ namespace Voxels.Components
 		}
 		private void SetPalette(Color32[] palette)
 		{
+			Palette = palette;
+			
 			if(m_Texture != null)
 				Destroy(m_Texture);
 			
@@ -83,6 +87,9 @@ namespace Voxels.Components
 				chunkRenderer.MeshRenderer.sharedMaterial = Material;
 				
 				m_Renderers.Add(chunk, chunkRenderer);
+				
+				if (m_ColliderEnabled)
+					chunkGameObject.AddComponent<MeshCollider>();
 			}
 		}
 		public ChunkRenderer GetRendererByChunk(Chunk chunk) => m_Renderers.TryGetValue(chunk, out ChunkRenderer chunkRenderer) ? chunkRenderer : null;

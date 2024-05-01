@@ -7,7 +7,7 @@ namespace Voxels
 {
 	public static class VoxelsUtilities
 	{
-		public static Voxel Raycast(VoxelModelBehaviour voxelModelBehaviour, Ray ray)
+		public static VoxelHit Raycast(VoxelModelBehaviour voxelModelBehaviour, Ray ray)
 		{
 			Transform modelTransform = voxelModelBehaviour.transform;
 			Model model = voxelModelBehaviour.Model;
@@ -23,10 +23,10 @@ namespace Voxels
 					continue;
 				
 				Bounds bounds = GetChunkBounds(chunk, modelTransform);
-				if (!bounds.IntersectRay(ray, out float distance))
+				if (!bounds.IntersectRay(ray, out float intersectionDistance))
 					continue;
 				
-				intersectChunksData.Add((chunk, distance));
+				intersectChunksData.Add((chunk, intersectionDistance));
 			}
 			
 			// Сортировка чанков по дистанции
@@ -36,6 +36,7 @@ namespace Voxels
 			foreach ((Chunk chunk, _) in intersectChunksData)
 			{
 				Voxel intersectedVoxel = null;
+				VoxelVector intersectedVoxelLocation = VoxelVector.Zero;
 				float minDistance = float.MaxValue;
 				
 				for (uint x = 0; x < Constants.CHUNK_SIZE; x++)
@@ -47,22 +48,55 @@ namespace Voxels
 						continue;
 					
 					Bounds bounds = GetVoxelBounds(chunk.GetGlobalVoxelCoordinates(x, y, z), modelTransform);
-					if (!bounds.IntersectRay(ray, out float distance))
+					if (!bounds.IntersectRay(ray, out float intersectionDistance))
 						continue;
 
-					if (!(distance < minDistance))
+					if (!(intersectionDistance < minDistance))
 						continue;
 
-					minDistance = distance;
+					minDistance = intersectionDistance;
 					intersectedVoxel = voxel;
+					intersectedVoxelLocation = new VoxelVector(x, y, z);
 				}
 
 				if (intersectedVoxel != null)
-					return intersectedVoxel;
+					return VoxelHit.Hit(intersectedVoxel, intersectedVoxelLocation, minDistance);
 			}
 
-			return null;
+			return VoxelHit.NoHit;
 		}
+		public static Vector3 GetRaycastNormal(VoxelModelBehaviour voxelModelBehaviour, Ray ray, VoxelHit hit)
+		{
+			if (!hit.IsHit)
+				return Vector3.zero;
+			
+			Transform modelTransform = voxelModelBehaviour.transform;
+			
+			Vector3 direction = (ray.GetPoint(hit.Distance) - GetVoxelWorldLocation(voxelModelBehaviour, hit.GlobalLocation)).normalized;
+			Vector3 localDirection = modelTransform.InverseTransformDirection(direction);
+			
+			float maxDot = 0.0f;
+			Vector3 localNormal = Vector3.zero;
+			Vector3[] normals = new[]
+			{
+				Vector3.left, Vector3.right,
+				Vector3.down, Vector3.up,
+				Vector3.back, Vector3.forward
+			};
+			
+			foreach (Vector3 n in normals)
+			{
+				float dot = Vector3.Dot(localDirection, n);
+				if (!(dot > maxDot))
+					continue;
+
+				maxDot = dot;
+				localNormal = n;
+			}
+
+			return modelTransform.TransformDirection(localNormal);
+		}
+		
 		private static Bounds GetChunkBounds(Chunk chunk, Transform transform)
 		{
 			float chunkUnitsSize = Constants.CHUNK_SIZE * Constants.VOXEL_SIZE;
@@ -82,8 +116,7 @@ namespace Voxels
 			return new Bounds(localCenter, new Vector3(voxelUnitsSize, voxelUnitsSize, voxelUnitsSize));
 		}
 		
-		
-		public static Vector3 GetVoxelWorldPosition(VoxelModelBehaviour voxelModelBehaviour, uint globalVoxelX, uint globalVoxelY, uint globalVoxelZ)
+		public static Vector3 GetVoxelWorldLocation(VoxelModelBehaviour voxelModelBehaviour, uint globalVoxelX, uint globalVoxelY, uint globalVoxelZ)
 		{
 			Transform modelTransform = voxelModelBehaviour.transform;
 			Model model = voxelModelBehaviour.Model;
@@ -93,6 +126,21 @@ namespace Voxels
 				(globalVoxelY + 0.5f) * Constants.VOXEL_SIZE,
 				(globalVoxelZ + 0.5f) * Constants.VOXEL_SIZE));
 		}
-		public static Vector3 GetVoxelWorldPosition(VoxelModelBehaviour voxelModelBehaviour, VoxelVector globalVoxelCoordinates) => GetVoxelWorldPosition(voxelModelBehaviour, globalVoxelCoordinates.X, globalVoxelCoordinates.Y, globalVoxelCoordinates.Z);
+		public static Vector3 GetVoxelWorldLocation(VoxelModelBehaviour voxelModelBehaviour, VoxelVector globalVoxelCoordinates) => GetVoxelWorldLocation(voxelModelBehaviour, globalVoxelCoordinates.X, globalVoxelCoordinates.Y, globalVoxelCoordinates.Z);
+		
+		
+		public struct VoxelHit
+		{
+			public bool IsHit { get; private set; }
+			public Voxel Voxel { get; private set; }
+			public VoxelVector LocalLocation { get; private set; }
+			public float Distance { get; private set; }
+			public VoxelVector GlobalLocation => Voxel.Chunk.GetGlobalVoxelCoordinates(LocalLocation.X, LocalLocation.Y, LocalLocation.Z);
+			
+			
+			
+			public static VoxelHit NoHit => new() { IsHit = false };
+			public static VoxelHit Hit(Voxel voxel, VoxelVector location, float distance) => new() { IsHit = true, Voxel = voxel, LocalLocation = location, Distance = distance };
+		}
 	}
 }

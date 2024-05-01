@@ -107,42 +107,26 @@
 		/// <summary>
 		/// Получение индекса чанка по его координатам
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="z"></param>
-		/// <returns></returns>
 		public uint GetChunkIndex(uint x, uint y, uint z) => x + y * ChunksSize.X + z * ChunksSize.X * ChunksSize.Y;
 		/// <summary>
 		/// Получение индекса чанка по его координатам
 		/// </summary>
-		/// <param name="voxelVector"></param>
-		/// <returns></returns>
 		public uint GetChunkIndex(VoxelVector voxelVector) => GetChunkIndex(voxelVector.X, voxelVector.Y, voxelVector.Z);
 		
 		
 		/// <summary>
 		/// Получение чанка по его координатам
 		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="z"></param>
-		/// <returns></returns>
 		public Chunk GetChunk(uint x, uint y, uint z) => Chunks[GetChunkIndex(x, y, z)];
 		/// <summary>
 		/// Получение чанка по его координатам
 		/// </summary>
-		/// <param name="voxelVector"></param>
-		/// <returns></returns>
 		public Chunk GetChunk(VoxelVector voxelVector) => GetChunk(voxelVector.X, voxelVector.Y, voxelVector.Z);
 		
 		
 		/// <summary>
 		/// Получение вокселя по его глобальным координатам
 		/// </summary>
-		/// <param name="globalX"></param>
-		/// <param name="globalY"></param>
-		/// <param name="globalZ"></param>
-		/// <returns></returns>
 		public Voxel GetVoxel(uint globalX, uint globalY, uint globalZ)
 		{
 			uint chunkX = globalX / Constants.CHUNK_SIZE;
@@ -166,8 +150,6 @@
 		/// <summary>
 		/// Получение вокселя по его глобальным координатам
 		/// </summary>
-		/// <param name="voxelVector"></param>
-		/// <returns></returns>
 		public Voxel GetVoxel(VoxelVector voxelVector) => GetVoxel(voxelVector.X, voxelVector.Y, voxelVector.Z);
 	}
 }

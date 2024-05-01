@@ -16,6 +16,8 @@ namespace Voxels.Core
 			Z = z;
 		}
 		
+		public static VoxelVector Zero => new(0, 0, 0);
+
 		public override string ToString() => $"VoxelVector({X}, {Y}, {Z})";
 		
 		public static implicit operator Vector2(VoxelVector v) => new(v.X, v.Y);

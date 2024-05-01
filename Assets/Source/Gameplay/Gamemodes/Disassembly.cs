@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Gameplay.VFX;
 using UnityEngine;
 using Voxels;
 using Voxels.Core;
@@ -41,10 +42,11 @@ namespace Gameplay.Gamemodes
 		{
 			// Создание луча
 			Ray ray = Handler.PlayerController.Camera.ScreenPointToRay(Handler.PlayerController.TapScreenPosition);
-			Voxel voxel = VoxelsUtilities.Raycast(Handler.ModelBehaviour, ray);
+			VoxelsUtilities.VoxelHit hit = VoxelsUtilities.Raycast(Handler.ModelBehaviour, ray);
+			Voxel voxel = hit.Voxel;
 			
 			// Проверка на попадание в воксель
-			if (voxel == null)
+			if (!hit.IsHit)
 				return;
 			
 			// Удаление вокселя
@@ -63,6 +65,8 @@ namespace Gameplay.Gamemodes
 			// Обновление чанков
 			foreach (Chunk chunk in chunks)
 				Handler.ModelBehaviour.GetRendererByChunk(chunk).Rebuild();
+			
+			VoxelBreakEffect.Active.Play(voxel, hit.GlobalLocation, Handler.ModelBehaviour, VoxelsUtilities.GetRaycastNormal(Handler.ModelBehaviour, ray, hit), Handler.PlayerController.Camera.transform.up);
 		}
 	}
 }

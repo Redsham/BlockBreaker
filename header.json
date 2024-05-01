@@ -8,6 +8,10 @@
     {
       "Id": "civilian_car",
       "Version": 1
+    },
+    {
+      "Id": "fishing_cat",
+      "Version": 1
     }
   ]
 }

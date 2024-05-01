@@ -1,0 +1,18 @@
+{
+    "name": "LeanTweenEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:b9731ec436a61f04fb8df16573e52455"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

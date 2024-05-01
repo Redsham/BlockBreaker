@@ -78,7 +78,8 @@ namespace ExternalResources.Local
 				}
 				catch(Exception e)
 				{
-					errorCallback?.Invoke("Failed to load meta.");
+					Debug.LogError("Failed to load meta: " + e.Message);
+					errorCallback?.Invoke("Failed to load meta: " + e.Message);
 				}
 				
 				callback?.Invoke(meta);
@@ -99,7 +100,8 @@ namespace ExternalResources.Local
 				}
 				catch(Exception e)
 				{
-					errorCallback?.Invoke("Failed to load asset.");
+					Debug.LogError("Failed to load asset: " + e.Message);
+					errorCallback?.Invoke("Failed to load asset: " + e.Message);
 				}
 				
 				callback?.Invoke(asset);
@@ -120,7 +122,8 @@ namespace ExternalResources.Local
 				}
 				catch(Exception e)
 				{
-					errorCallback?.Invoke("Failed to load thumbnail.");
+					Debug.LogError("Failed to load thumbnail: " + e.Message);
+					errorCallback?.Invoke("Failed to load thumbnail: " + e.Message);
 				}
 				
 				callback?.Invoke(texture);

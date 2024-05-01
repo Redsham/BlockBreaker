@@ -3,7 +3,7 @@ using Voxels;
 using Voxels.Components;
 using Voxels.Core;
 
-namespace Gameplay.VFX
+namespace VFX
 {
 	public class VoxelBreakEffect : MonoBehaviour
 	{

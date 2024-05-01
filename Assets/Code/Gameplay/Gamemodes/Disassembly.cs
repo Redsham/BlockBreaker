@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Gameplay.VFX;
 using UnityEngine;
+using VFX;
 using Voxels;
 using Voxels.Core;
 

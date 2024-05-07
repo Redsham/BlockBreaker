@@ -16,9 +16,9 @@ namespace UI.Home
 		{
 			foreach (Model model in ExternalResourcesManager.Models)
 			{
-				ExternalResourcesManager.LoadModelMeta(model.Id, meta =>
+				ExternalResourcesManager.LoadModelMeta(model, meta =>
 				{
-					if(!ExternalResourcesManager.OfflineMode || ExternalResourcesManager.IsModelAvailable(model.Id))
+					if(!ExternalResourcesManager.OfflineMode || ExternalResourcesManager.IsModelAvailable(model))
 						CreateModel(model, meta);
 				}, error =>
 				{
@@ -30,7 +30,7 @@ namespace UI.Home
 		private void CreateModel(Model model, ModelMeta modelMeta)
 		{
 			ModelAdapterView adapter = Instantiate(m_ModelTemplate, m_Container);
-			adapter.BindModel(model, modelMeta);
+			adapter.BindModel(model);
 			adapter.OnClick.AddListener(() => { OnClick.Invoke(model); });
 		}
 	}

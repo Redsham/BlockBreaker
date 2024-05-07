@@ -16,7 +16,7 @@ namespace UI.Dialogs.Core
 			foreach (DialogBox dialogBox in Resources.LoadAll<DialogBox>("UI/Dialogs"))
 				Templates.Add(dialogBox.GetType(), dialogBox);
 			
-			Debug.Log($"DialogsManager initialized with {Templates.Count} templates.");
+			Debug.Log($"[DialogsManager] DialogsManager initialized with {Templates.Count} templates.");
 		}
 
 		/// <summary>

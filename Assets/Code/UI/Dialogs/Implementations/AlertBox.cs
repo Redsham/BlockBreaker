@@ -17,6 +17,16 @@ namespace UI.Dialogs.Implementations
 		[Header("Styles")]
 		[SerializeField] private List<AlertBoxStyle> m_Styles;
 
+
+		private void Awake()
+		{
+			m_Button.onClick.AddListener(() =>
+			{
+				UISounds.Play("click");
+				Close();
+			});
+		}
+
 		public void Show(string title, string body, string style)
 		{
 			SetStyle(style);

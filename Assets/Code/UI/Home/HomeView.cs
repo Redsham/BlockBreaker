@@ -7,6 +7,7 @@ using UI.Dialogs.Core;
 using UI.Dialogs.Implementations;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using Voxels;
 
 namespace UI.Home
@@ -14,39 +15,22 @@ namespace UI.Home
 	public class HomeView : MonoBehaviour
 	{
 		[SerializeField] private ModelsListView m_ModelsView;
+		[SerializeField] private ModelDialog m_ModelDialog;
 
 		private void Start()
 		{
-			Application.targetFrameRate = 60;
-			StartCoroutine(Initialization());
-		}
-		
-		private IEnumerator Initialization()
-		{
-			if (!ExternalResourcesManager.IsReady)
-			{
-				LoadingScreenManager.Show();
-				ExternalResourcesManager.Prepare();
-				yield return new WaitUntil(() => ExternalResourcesManager.IsReady);
-				LoadingScreenManager.Hide();
-				
-				AlertBox alertBox = DialogsManager.CreateDialog<AlertBox>();
-				if (!ExternalResourcesManager.OfflineMode)
-					alertBox.Show("Success", "Remote storage header downloaded. Ready to use.", "Success");
-				else
-					alertBox.Show("Error", "No internet connection. Using only local storage.", "Error");
-			}
-
 			m_ModelsView.Fill();
+			m_ModelDialog.OnPlay.AddListener(model => StartCoroutine(OpenModelProcess(model)));
 		}
 
 		public void SelectModel(Model model)
 		{
-			//StartCoroutine(OpenModelProcess(model));
+			m_ModelDialog.Show(model);
 		}
-		private IEnumerator OpenModelProcess(Model modelId)
+		
+		private IEnumerator OpenModelProcess(Model model)
 		{
-			if(ExternalResourcesManager.OfflineMode && !ExternalResourcesManager.IsModelAvailable(modelId.Id))
+			if(ExternalResourcesManager.OfflineMode && !ExternalResourcesManager.IsModelAvailable(model))
 			{
 				AlertBox alertBox = DialogsManager.CreateDialog<AlertBox>();
 				alertBox.Show("Error", "Model is not available in offline mode.", "Error");
@@ -60,7 +44,7 @@ namespace UI.Home
 			bool modelDownloading = true;
 			ModelAsset modelAsset = null;
 			
-			ExternalResourcesManager.LoadModelAsset(modelId.Id, callback =>
+			ExternalResourcesManager.LoadModelAsset(model, callback =>
 			{
 				modelAsset = callback;
 				modelDownloading = false;

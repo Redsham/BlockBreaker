@@ -27,8 +27,20 @@ namespace UI
 			for (int i = 0; i < MAX_SOUNDS; i++)
 			{
 				AudioSource audioSource = gameObject.AddComponent<AudioSource>();
-				audioSource.playOnAwake = false;
 				AudioSources[i] = audioSource;
+				
+				audioSource.bypassEffects = true;
+				audioSource.bypassListenerEffects = true;
+				audioSource.bypassReverbZones = true;
+				
+				audioSource.volume = 1.0f;
+				audioSource.pitch = 1.0f;
+				audioSource.spatialBlend = 0.0f;
+				
+				audioSource.playOnAwake = false;
+				audioSource.loop = false;
+
+				audioSource.minDistance = audioSource.maxDistance = float.MaxValue;
 			}
 			
 			DontDestroyOnLoad(gameObject);

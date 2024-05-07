@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace ExternalResources.Data
 {
 	[System.Serializable]
@@ -5,5 +7,7 @@ namespace ExternalResources.Data
 	{
 		public string Id;
 		public byte   Version;
+
+		internal ModelMeta Meta;
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Serialization;
 using Voxels.Components;
 
 namespace Gameplay
@@ -10,13 +11,22 @@ namespace Gameplay
 		/// Текущая сессия игры
 		/// </summary>
 		public static Session Session { get; set; }
-		
+		/// <summary>
+		/// Текущий режим игры
+		/// </summary>
 		public GamemodeBase Gamemode { get; private set; }
+		
+		
+		
 		public VoxelModelBehaviour ModelBehaviour => m_ModelBehaviour;
 		public PlayerController PlayerController => m_PlayerController;
+		public UnityEvent<float> OnProgressChanged => m_OnProgressChanged;
 		
-		public UnityEvent<float> OnProgressChanged;
 		
+		[Header("Events")]
+		[SerializeField] private UnityEvent<float> m_OnProgressChanged;
+		
+		[Header("Components")]
 		[SerializeField] private VoxelModelBehaviour m_ModelBehaviour;
 		[SerializeField] private PlayerController m_PlayerController;
 
@@ -32,9 +42,10 @@ namespace Gameplay
 			Gamemode.Init(this);
 			
 			ModelBehaviour.SetModel(Gamemode.PrepareModel(session.Model), session.Model.Palette);
-			Gamemode.OnProgressChanged += OnProgressChanged.Invoke;
+			Gamemode.OnProgressChanged += m_OnProgressChanged.Invoke;
 			
 			Gamemode.OnStart();
 		}
+		private void Update() => Session.Tick(Time.deltaTime);
 	}
 }

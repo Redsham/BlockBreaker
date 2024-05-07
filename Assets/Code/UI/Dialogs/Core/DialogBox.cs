@@ -35,7 +35,9 @@ namespace UI.Dialogs.Core
 
 			#region Animation
 
-			Background.color = Color.clear;
+			Color backgroundColor = Background.color;
+			backgroundColor.a = 0.0f;
+			Background.color = backgroundColor;
 			LeanTween.alpha(Background.rectTransform, 0.9f, 0.1f);
 			
 			Content.alpha = 0.0f;

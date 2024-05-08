@@ -90,7 +90,7 @@ namespace UI.MainMenu
 			LTSeq sequence = LeanTween.sequence();
 			sequence.append(LeanTween.value(gameObject, 0.0f, 1.0f, 0.5f).setOnUpdate((float value) =>
 			{
-				m_Cost.text = Mathf.Lerp(m_Meta.Cost, 0, value).ToString("F0");
+				m_Cost.text = Mathf.Lerp(m_Meta.Cost, 0, value).ToString("000");
 			}));
 			sequence.append(() =>
 			{

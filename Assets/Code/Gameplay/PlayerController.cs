@@ -46,7 +46,7 @@ namespace Gameplay
 			}
 		}
 		
-		private Bounds  m_Bounds;
+		private Bounds m_Bounds;
 		private Vector3 m_Origin;
 		private Vector2 m_Direction;
 		private Vector2 m_SmoothedDirection;
@@ -54,6 +54,9 @@ namespace Gameplay
 		private float m_Distance = 1.0f;
 		
 		private Vector2 m_TouchStartPos;
+		
+		private bool m_IsOrbiting;
+		private float m_OrbitAngle;
 
 		
 		private void Awake()
@@ -70,6 +73,9 @@ namespace Gameplay
 			#if UNITY_ANDROID || UNITY_IOS || UNITY_EDITOR
 			MobileInput();
 			#endif
+			
+			if(OrbitUpdate())
+				return;
 
 			m_SmoothedDirection.x = Mathf.LerpAngle(m_SmoothedDirection.x, m_Direction.x, Time.unscaledDeltaTime * 25.5f);
 			m_SmoothedDirection.y = Mathf.LerpAngle(m_SmoothedDirection.y, m_Direction.y, Time.unscaledDeltaTime * 25.5f);
@@ -91,6 +97,9 @@ namespace Gameplay
 
 		private void DesktopInput()
 		{
+			if (EventSystem.current.IsPointerOverGameObject())
+				return;
+			
 			// Тап
 			if (Input.GetMouseButtonDown(0))
 			{
@@ -100,7 +109,12 @@ namespace Gameplay
 			
 			// Поворот камеры
 			if (Input.GetMouseButtonDown(1))
+			{
+				if(m_IsOrbiting)
+					StopOrbitAnimation();
+
 				m_TouchStartPos = Input.mousePosition;
+			}
 			else if (Input.GetMouseButton(1))
 			{
 				Vector2 delta = (Vector2)Input.mousePosition - m_TouchStartPos;
@@ -147,6 +161,9 @@ namespace Gameplay
 					switch (touch.phase)
 					{
 						case TouchPhase.Began:
+							if(m_IsOrbiting)
+								StopOrbitAnimation();
+                            
 							m_TouchStartPos = touch.position;
 							break;
 						case TouchPhase.Moved:
@@ -205,6 +222,39 @@ namespace Gameplay
 					break;
 				}
 			}
+		}
+		
+		private bool OrbitUpdate()
+		{
+			if (!m_IsOrbiting)
+				return false;
+			
+			m_OrbitAngle += Time.unscaledDeltaTime * 45.0f;
+			if (m_OrbitAngle >= 360.0f)
+				m_OrbitAngle -= 360.0f;
+			
+			m_Direction.x = m_OrbitAngle;
+			
+			Transform.SetPositionAndRotation(
+				Quaternion.Euler(m_Direction.y, m_OrbitAngle, 0.0f) * Vector3.forward * -m_Distance + m_Origin,
+				Quaternion.Euler(m_Direction.y, m_OrbitAngle, 0.0f)
+			);
+
+			return true;
+		}
+		
+		public void PlayOrbitAnimation()
+		{
+			m_Distance = m_Bounds.extents.magnitude * 4.0f;
+			m_OrbitAngle = 0.0f;
+			m_Direction.y = 30.0f;
+			
+			m_IsOrbiting = true;
+		}
+		public void StopOrbitAnimation()
+		{
+			m_IsOrbiting = false;
+			m_SmoothedDirection = m_Direction;
 		}
 	}
 }

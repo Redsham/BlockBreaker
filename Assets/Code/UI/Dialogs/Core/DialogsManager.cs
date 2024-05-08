@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Bootstrapping;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -7,15 +8,15 @@ namespace UI.Dialogs.Core
 {
 	public static class DialogsManager
 	{
-		private static readonly Dictionary<Type, DialogBox> Templates;
+		private static readonly Dictionary<Type, DialogBox> Templates = new();
 		
-		static DialogsManager()
+		[BootstrapMethod]
+		public static void Bootstrap()
 		{
-			Templates = new Dictionary<Type, DialogBox>();
 			foreach (DialogBox dialogBox in Resources.LoadAll<DialogBox>("UI/Dialogs"))
 				Templates.Add(dialogBox.GetType(), dialogBox);
 			
-			Debug.Log($"DialogsManager initialized with {Templates.Count} templates.");
+			Debug.Log($"[DialogsManager] DialogsManager initialized with {Templates.Count} templates.");
 		}
 
 		/// <summary>

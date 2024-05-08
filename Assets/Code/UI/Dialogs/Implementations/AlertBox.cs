@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
+using UI.Audio;
 using UI.Dialogs.Core;
 using UnityEngine;
 using UnityEngine.UI;
@@ -16,6 +17,16 @@ namespace UI.Dialogs.Implementations
 		
 		[Header("Styles")]
 		[SerializeField] private List<AlertBoxStyle> m_Styles;
+
+
+		private void Awake()
+		{
+			m_Button.onClick.AddListener(() =>
+			{
+				UISounds.Play("click");
+				Close();
+			});
+		}
 
 		public void Show(string title, string body, string style)
 		{

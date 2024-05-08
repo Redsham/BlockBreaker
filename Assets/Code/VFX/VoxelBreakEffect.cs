@@ -24,6 +24,8 @@ namespace VFX
 		
 		private int m_HummerTweenId;
 		private int m_VoxelTweenId;
+        
+        
 
 		private void Awake() => Active = this;
 		private void Start()
@@ -70,7 +72,7 @@ namespace VFX
 							Quaternion.LookRotation(normal, up),
 							value);
 					})
-					.setEaseInCirc()
+					.setEaseOutBounce()
 			);
 			seq.append(() =>
 			{

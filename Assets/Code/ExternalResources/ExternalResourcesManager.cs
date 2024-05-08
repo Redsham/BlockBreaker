@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using Bootstrapping;
 using ExternalResources.Data;
 using ExternalResources.Local;
 using ExternalResources.Remote;
@@ -27,11 +29,26 @@ namespace ExternalResources
 		/// </summary>
 		public static IEnumerable<Model> Models => IsReady ? (OfflineMode ? Local.Models : Remote.Models) : Array.Empty<Model>();
 		
+		
+		
+		[BootstrapMethod]
+		public static IEnumerator Bootstrap()
+		{
+			Prepare();
+			yield return new WaitUntil(() => IsReady);
+			Debug.Log("[ExternalResourcesManager] External resources is ready.");
+		}
+		
+		
+		
 		/// <summary>
 		/// Подготовка к работе с внешними ресурсами.
 		/// </summary>
 		public static void Prepare()
 		{
+			if(IsReady)
+				return;
+			
 			// Подготовка локального хранилища
 			Local.Prepare(() =>
 			{
@@ -62,55 +79,65 @@ namespace ExternalResources
 		/// Проверка наличия компонента модели в хранилище.
 		/// Если включен оффлайн-режим, проверяется только локальное хранилище.
 		/// </summary>
-		/// <param name="id">Идентификатор модели</param>
+		/// <param name="model">Идентификатор модели</param>
 		/// <param name="component">Компонент модели</param>
-		public static bool IsModelAvailable(string id, ModelComponent component = ModelComponent.Full) => OfflineMode ? Local.IsModelAvailable(id, component) : Remote.IsModelAvailable(id, component);
+		public static bool IsModelAvailable(Model model, ModelComponent component = ModelComponent.Full) => OfflineMode ? Local.IsModelAvailable(model.Id, component) : Remote.IsModelAvailable(model.Id, component);
 		/// <summary>
 		/// Загрузка метаданных модели.
 		/// </summary>
-		public static void LoadModelMeta(string id, Action<ModelMeta> callback, Action<string> errorCallback = null)
+		public static void LoadModelMeta(Model model, Action<ModelMeta> callback, Action<string> errorCallback = null)
 		{
+			// Если метаданные модели уже загружены, возвращаем их
+			if(model.Meta != null)
+			{
+				callback(model.Meta);
+				return;
+			}
+			
+			// Кэширование метаданных модели
+			callback += meta => model.Meta = meta;
+			
 			if(OfflineMode)
-				Local.LoadModelMeta(id, callback, errorCallback); // Загрузка ассета модели из локального хранилища
+				Local.LoadModelMeta(model.Id, callback, errorCallback); // Загрузка ассета модели из локального хранилища
 			else
 			{
 				// Если модель отсутствует в локальном хранилище или версия модели на сервере больше, чем локальная, загружаем с сервера
-				if(!Local.IsModelAvailable(id, ModelComponent.Meta) || Remote.GetModelVersion(id) > Local.GetModelVersion(id))
-					Remote.LoadModelMeta(id, callback, errorCallback);
+				if(!Local.IsModelAvailable(model.Id, ModelComponent.Meta) || Remote.GetModelVersion(model.Id) > Local.GetModelVersion(model.Id))
+					Remote.LoadModelMeta(model.Id, callback, errorCallback);
 				else
-					Local.LoadModelMeta(id, callback, errorCallback);
+					Local.LoadModelMeta(model.Id, callback, errorCallback);
 			}
 		}
 		/// <summary>
 		/// Загрузка миниатюры модели.
 		/// </summary>
-		public static void LoadModelThumbnail(string id, Action<Texture2D> callback, Action<string> errorCallback = null)
+		public static void LoadModelThumbnail(Model model, Action<Texture2D> callback, Action<string> errorCallback = null)
 		{
 			if(OfflineMode)
-				Local.LoadModelThumbnail(id, callback, errorCallback); // Загрузка ассета модели из локального хранилища
+				Local.LoadModelThumbnail(model.Id, callback, errorCallback); // Загрузка ассета модели из локального хранилища
 			else
 			{
 				// Если модель отсутствует в локальном хранилище или версия модели на сервере больше, чем локальная, загружаем с сервера
-				if(!Local.IsModelAvailable(id, ModelComponent.Thumbnail) || Remote.GetModelVersion(id) > Local.GetModelVersion(id))
-					Remote.LoadModelThumbnail(id, callback, errorCallback);
+				if(!Local.IsModelAvailable(model.Id, ModelComponent.Thumbnail) || Remote.GetModelVersion(model.Id) > Local.GetModelVersion(model.Id))
+					Remote.LoadModelThumbnail(model.Id, callback, errorCallback);
 				else
-					Local.LoadModelThumbnail(id, callback, errorCallback);
+					Local.LoadModelThumbnail(model.Id, callback, errorCallback);
 			}
 		}
 		/// <summary>
 		/// Загрузка ассета модели.
 		/// </summary>
-		public static void LoadModelAsset(string id, Action<ModelAsset> callback, Action<string> errorCallback = null)
+		public static void LoadModelAsset(Model model, Action<ModelAsset> callback, Action<string> errorCallback = null)
 		{
 			if(OfflineMode)
-				Local.LoadModelAsset(id, callback, errorCallback); // Загрузка ассета модели из локального хранилища
+				Local.LoadModelAsset(model.Id, callback, errorCallback); // Загрузка ассета модели из локального хранилища
 			else
 			{
 				// Если модель отсутствует в локальном хранилище или версия модели на сервере больше, чем локальная, загружаем с сервера
-				if(!Local.IsModelAvailable(id, ModelComponent.Asset) || Remote.GetModelVersion(id) > Local.GetModelVersion(id))
-					Remote.LoadModelAsset(id, callback, errorCallback);
+				if(!Local.IsModelAvailable(model.Id, ModelComponent.Asset) || Remote.GetModelVersion(model.Id) > Local.GetModelVersion(model.Id))
+					Remote.LoadModelAsset(model.Id, callback, errorCallback);
 				else
-					Local.LoadModelAsset(id, callback, errorCallback);
+					Local.LoadModelAsset(model.Id, callback, errorCallback);
 			}
 		}
 	}

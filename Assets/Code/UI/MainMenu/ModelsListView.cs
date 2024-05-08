@@ -3,7 +3,7 @@ using ExternalResources.Data;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace UI.Home
+namespace UI.MainMenu
 {
 	public class ModelsListView : MonoBehaviour
 	{

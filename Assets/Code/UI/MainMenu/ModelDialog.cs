@@ -3,13 +3,14 @@ using ExternalResources;
 using ExternalResources.Data;
 using Gameplay;
 using TMPro;
+using UI.Audio;
 using UI.Dialogs.Core;
 using UI.Other;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace UI.Home
+namespace UI.MainMenu
 {
 	public class ModelDialog : DialogBox
 	{
@@ -19,6 +20,9 @@ namespace UI.Home
 		
 		[SerializeField] private TextMeshProUGUI m_Cost;
 		[SerializeField] private CanvasGroup m_CostGroup;
+		
+		[SerializeField] private TextMeshProUGUI m_Author;
+		[SerializeField] private Image m_AuthorBackground;
 		
 		[Header("DialogBox Events")]
 		[SerializeField] public UnityEvent<Model> OnPlay;
@@ -59,6 +63,10 @@ namespace UI.Home
 			{
 				m_Meta = meta;
 				m_Cost.text = meta.Cost.ToString();
+				
+				m_Author.text = meta.Author;
+				m_AuthorBackground.color = meta.GetColor();
+				
 				LayoutRebuilder.ForceRebuildLayoutImmediate(m_CostGroup.transform as RectTransform);
 			});
 			

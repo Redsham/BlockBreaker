@@ -8,10 +8,9 @@ using UI.Dialogs.Implementations;
 using UI.Other;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using Voxels;
 
-namespace UI.Home
+namespace UI.MainMenu
 {
 	public class HomeView : MonoBehaviour
 	{
@@ -22,11 +21,15 @@ namespace UI.Home
 		{
 			m_ModelsView.OnClick.AddListener(m_ModelDialog.Show);
 			m_ModelsView.Fill();
+			
 			m_ModelDialog.OnPlay.AddListener(model => StartCoroutine(OpenModelProcess(model)));
 		}
 		
 		private IEnumerator OpenModelProcess(Model model)
 		{
+			Debug.Log($"Start open model ({model.Id}) process.");
+			
+			// Проверка наличия модели в оффлайн режиме
 			if(ExternalResourcesManager.OfflineMode && !ExternalResourcesManager.IsModelAvailable(model))
 			{
 				AlertBox alertBox = DialogsManager.CreateDialog<AlertBox>();
@@ -43,21 +46,28 @@ namespace UI.Home
 			
 			ExternalResourcesManager.LoadModelAsset(model, callback =>
 			{
+				Debug.Log($"Model ({model.Id}) successfully loaded.");
+				
 				modelAsset = callback;
 				modelDownloading = false;
 				isSuccessful = true;
 			}, error =>
 			{
+				Debug.LogError($"Error while loading model ({model.Id}): {error}");
+				
 				modelDownloading = false;
 				isSuccessful = false;
 				
-				LoadingScreenManager.Hide();
 				AlertBox alertBox = DialogsManager.CreateDialog<AlertBox>();
 				alertBox.Show("Error", error, "Error");
+				
+				LoadingScreenManager.Hide();
 			});
 			
 			// Ожидание завершения загрузки
 			yield return new WaitWhile(() => modelDownloading);
+			
+			// Отмена загрузки, если произошла ошибка
 			if (!isSuccessful)
 				yield break;
 			
@@ -70,6 +80,8 @@ namespace UI.Home
 			asyncOperation.allowSceneActivation = false;
 			
 			yield return new WaitUntil(() => asyncOperation.progress >= 0.9f);
+			
+			Debug.Log("Scene successfully loaded, activating...");
 			
 			LoadingScreenManager.Hide();
 			Fade.Show(() => asyncOperation.allowSceneActivation = true);

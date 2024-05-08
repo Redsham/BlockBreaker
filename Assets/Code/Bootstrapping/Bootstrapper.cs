@@ -21,7 +21,7 @@ namespace Bootstrapping
 		
 		private IEnumerator BootstrapCoroutine()
 		{
-			Debug.Log("[Bootstraper] Bootstrapping started.");
+			Debug.Log("[Bootstrapper] Bootstrapping started.");
 			
 			IEnumerable<BootstrapTarget> bootstraps = CollectBootstrapsInstances();
 			IEnumerable<BootstrapTarget> bootstrapMethods = CollectBootstrapMethods();
@@ -34,7 +34,7 @@ namespace Bootstrapping
 					yield return coroutine;
 			}
 			
-			Debug.Log("[Bootstraper] Bootstrapping completed successfully.");
+			Debug.Log("[Bootstrapper] Bootstrapping completed successfully.");
 			
 			OnCompleted.Invoke();
 		}

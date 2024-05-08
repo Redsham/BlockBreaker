@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UI
+namespace UI.Audio
 {
 	public class UISoundPlayer : MonoBehaviour
 	{

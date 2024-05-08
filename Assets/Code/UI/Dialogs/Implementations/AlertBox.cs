@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using TMPro;
+using UI.Audio;
 using UI.Dialogs.Core;
 using UnityEngine;
 using UnityEngine.UI;

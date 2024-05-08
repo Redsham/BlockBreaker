@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Bootstrapping;
 using UnityEngine;
 
-namespace UI
+namespace UI.Audio
 {
 	public class UISounds : MonoBehaviour, IBootstrappble
 	{

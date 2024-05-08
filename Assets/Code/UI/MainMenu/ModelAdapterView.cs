@@ -1,10 +1,11 @@
 using ExternalResources.Data;
+using UI.Audio;
 using UI.Other;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 
-namespace UI.Home
+namespace UI.MainMenu
 {
 	public class ModelAdapterView : MonoBehaviour, IPointerClickHandler
 	{

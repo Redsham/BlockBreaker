@@ -44,6 +44,18 @@ namespace Gameplay
 				Current = new Data();
 			}
 		}
+		public static void Save()
+		{
+			try
+			{
+				File.WriteAllText(FilePath, JsonUtility.ToJson(Current, true));
+				Debug.Log("[UserStats] User stats saved.");
+			}
+			catch (Exception e)
+			{
+				Debug.LogError($"[UserStats] Failed to save user stats: {e}.");
+			}
+		}
 		
 		public static void UnlockModel(string id)
 		{
@@ -55,6 +67,7 @@ namespace Gameplay
 			
 			Current.UnlockedModels.Add(id.GetHashCode());
 			OnModelUnlocked?.Invoke(id);
+			Save();
 		}
 		public static bool IsModelUnlocked(string id) => Current.UnlockedModels.Contains(id.GetHashCode());
 
@@ -64,6 +77,7 @@ namespace Gameplay
 			set
 			{
 				Current.Moneys = value;
+				Save();
 				OnMoneysChanged?.Invoke(value);
 			}
 		}
@@ -72,7 +86,7 @@ namespace Gameplay
 		private class Data
 		{
 			public uint Moneys = 1000;
-			public HashSet<int> UnlockedModels = new HashSet<int>();
+			public List<int> UnlockedModels = new List<int>();
 		}
 	}
 }

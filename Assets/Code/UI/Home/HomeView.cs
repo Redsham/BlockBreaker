@@ -5,6 +5,7 @@ using Gameplay;
 using Gameplay.Gamemodes;
 using UI.Dialogs.Core;
 using UI.Dialogs.Implementations;
+using UI.Other;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
@@ -19,13 +20,9 @@ namespace UI.Home
 
 		private void Start()
 		{
+			m_ModelsView.OnClick.AddListener(m_ModelDialog.Show);
 			m_ModelsView.Fill();
 			m_ModelDialog.OnPlay.AddListener(model => StartCoroutine(OpenModelProcess(model)));
-		}
-
-		public void SelectModel(Model model)
-		{
-			m_ModelDialog.Show(model);
 		}
 		
 		private IEnumerator OpenModelProcess(Model model)
@@ -69,9 +66,13 @@ namespace UI.Home
 			GamemodeHandler.Session = session;
 			
 			// Загрузка сцены
-			yield return SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
+			AsyncOperation asyncOperation = SceneManager.LoadSceneAsync("Game", LoadSceneMode.Single);
+			asyncOperation.allowSceneActivation = false;
+			
+			yield return new WaitUntil(() => asyncOperation.progress >= 0.9f);
 			
 			LoadingScreenManager.Hide();
+			Fade.Show(() => asyncOperation.allowSceneActivation = true);
 		}
 	}
 }

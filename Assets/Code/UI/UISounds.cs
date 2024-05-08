@@ -40,7 +40,8 @@ namespace UI
 				audioSource.playOnAwake = false;
 				audioSource.loop = false;
 
-				audioSource.minDistance = audioSource.maxDistance = float.MaxValue;
+				audioSource.minDistance = float.MaxValue - 0.01f;
+				audioSource.maxDistance = float.MaxValue;
 			}
 			
 			DontDestroyOnLoad(gameObject);

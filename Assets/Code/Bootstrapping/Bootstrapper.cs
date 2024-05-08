@@ -4,26 +4,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using UnityEngine.Events;
 
 namespace Bootstrapping
 {
 	[DefaultExecutionOrder(-1000)]
-	public class Bootstraper : MonoBehaviour
+	public class Bootstrapper : MonoBehaviour
 	{
-		public static Bootstraper Active { get; private set; }
+		public static Bootstrapper Active { get; private set; }
+		
+		public UnityEvent OnCompleted = new UnityEvent();
 		
 		private void Awake() => Active = this;
-		private IEnumerator Start()
+		
+		public void Bootstrap() => StartCoroutine(BootstrapCoroutine());
+		
+		private IEnumerator BootstrapCoroutine()
 		{
-			yield return Bootstrap();
-			yield return SceneManager.LoadSceneAsync(1, LoadSceneMode.Single);
-			Debug.Log("Bootstraper: Bootstrapping completed.");
-		}
-
-
-		public IEnumerator Bootstrap()
-		{
+			Debug.Log("[Bootstraper] Bootstrapping started.");
+			
 			IEnumerable<BootstrapTarget> bootstraps = CollectBootstrapsInstances();
 			IEnumerable<BootstrapTarget> bootstrapMethods = CollectBootstrapMethods();
 
@@ -34,11 +33,15 @@ namespace Bootstrapping
 				if (coroutine != null)
 					yield return coroutine;
 			}
+			
+			Debug.Log("[Bootstraper] Bootstrapping completed successfully.");
+			
+			OnCompleted.Invoke();
 		}
 		
 		private static IEnumerable<BootstrapTarget> CollectBootstrapsInstances()
 		{
-			List<Type> bootstrapTypes = new();
+			List<Type> bootstrapTypes = new List<Type>();
 			
 			// Поиск всех типов, реализующих интерфейс IBootstrap
 			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
@@ -53,7 +56,7 @@ namespace Bootstrapping
 				}
 			}
 
-			List<BootstrapTarget> bootstrapInstances = new();
+			List<BootstrapTarget> bootstrapInstances = new List<BootstrapTarget>();
 			foreach (Type type in bootstrapTypes)
 			{
 				// Поиск объекта в сцене
@@ -76,7 +79,7 @@ namespace Bootstrapping
 		}
 		private static IEnumerable<BootstrapTarget> CollectBootstrapMethods()
 		{
-			List<BootstrapTarget> bootstrapMethods = new();
+			List<BootstrapTarget> bootstrapMethods = new List<BootstrapTarget>();
 			foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
 				foreach (Type type in assembly.GetTypes())
@@ -84,11 +87,8 @@ namespace Bootstrapping
 					if (type.IsInterface || (type.IsAbstract && !type.IsSealed))
 						continue;
 					
-					foreach (MethodInfo method in type.GetMethods())
+					foreach (MethodInfo method in type.GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
 					{
-						if (!method.IsStatic)
-							continue;
-					
 						object[] attributes = method.GetCustomAttributes(typeof(BootstrapMethodAttribute), false);
 					
 						if (attributes.Length == 0)

@@ -36,6 +36,7 @@ namespace ExternalResources
 		{
 			Prepare();
 			yield return new WaitUntil(() => IsReady);
+			Debug.Log("[ExternalResourcesManager] External resources is ready.");
 		}
 		
 		
@@ -90,7 +91,6 @@ namespace ExternalResources
 			if(model.Meta != null)
 			{
 				callback(model.Meta);
-				Debug.Log($"Model {model.Id} meta loaded from cache.");
 				return;
 			}
 			

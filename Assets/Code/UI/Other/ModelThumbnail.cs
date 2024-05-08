@@ -45,6 +45,11 @@ namespace UI.Other
 				}).id;
 			};
 		}
+		private void Start()
+		{
+			if (m_ThumbnailData != null)
+				m_Thumbnail.materialForRendering.SetFloat(DiscolorationProperty, UserStats.IsModelUnlocked(m_ThumbnailData.Model.Id) ? 0.0f : 1.0f);
+		}
 		private void OnDestroy()
 		{
 			Destroy(m_ThumbnailMaterial);

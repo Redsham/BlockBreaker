@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 2731240164769736180}
   - component: {fileID: 8045314341874700761}
   m_Layer: 5
-  m_Name: Symbol
+  m_Name: Thumbnail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -309,3 +309,6 @@ MonoBehaviour:
   m_OnUp:
     m_PersistentCalls:
       m_Calls: []
+  m_Background: {fileID: 6458193404592217095}
+  m_Text: {fileID: 1049730675690274863}
+  m_Thumbnail: {fileID: 8045314341874700761}

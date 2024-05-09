@@ -15,7 +15,7 @@ namespace Gameplay
 		/// <summary>
 		/// Вызывается при изменении количества денег.
 		/// </summary>
-		public static event Action<uint> OnMoneysChanged;
+		public static event Action<uint, uint> OnMoneysChanged;
 		/// <summary>
 		/// Вызывается при разблокировке модели.
 		/// </summary>
@@ -76,9 +76,12 @@ namespace Gameplay
 			get => Current.Moneys;
 			set
 			{
+				uint oldValue = Current.Moneys;
+				
 				Current.Moneys = value;
 				Save();
-				OnMoneysChanged?.Invoke(value);
+				
+				OnMoneysChanged?.Invoke(oldValue, value);
 			}
 		}
 

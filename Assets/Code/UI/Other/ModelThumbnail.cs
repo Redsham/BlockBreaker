@@ -197,7 +197,7 @@ namespace UI.Other
 				Destroy(Texture);
 				
 				Thumbnails.Remove(Model.Id.GetHashCode());
-				Debug.Log($"Thumbnail for model {Model.Id} unloaded.");
+				Debug.Log($"Thumbnail for model ({Model.Id}) unloaded.");
 			}
 		}
 	}

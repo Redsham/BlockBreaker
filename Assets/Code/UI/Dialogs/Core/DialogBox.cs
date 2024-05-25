@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Serialization;
@@ -8,9 +9,9 @@ namespace UI.Dialogs.Core
 	public abstract class DialogBox : MonoBehaviour
 	{
 		[Header("Events")]
-		public UnityEvent OnShow = new();
-		public UnityEvent OnHide = new();
-		public UnityEvent OnClose = new();
+		public UnityEvent OnShow = new UnityEvent();
+		public UnityEvent OnHide = new UnityEvent();
+		public UnityEvent OnClose = new UnityEvent();
 		
 		public GameObject Root => gameObject;
 		public RectTransform RootTransform { get; private set; }
@@ -19,17 +20,31 @@ namespace UI.Dialogs.Core
 		[Header("Components")]
 		[SerializeField] protected Image Background;
 		[SerializeField] protected CanvasGroup Content;
+
+		private bool m_IsInitialized;
 		
 		
-		public void Initialize()
+		public void Initialize(bool hideAfter)
 		{
+			if (m_IsInitialized)
+				throw new Exception();
+			
 			RootTransform = (RectTransform)Root.transform;
-			Root.SetActive(false);
-			IsVisible = false;
+
+			if (hideAfter)
+			{
+				Root.SetActive(false);
+				IsVisible = false;
+			}
+
+			m_IsInitialized = true;
 		}
 		
 		public virtual void Show(object[] args)
 		{
+			if(!m_IsInitialized)
+				Initialize(false);
+			
 			Root.SetActive(true);
 			LayoutRebuilder.ForceRebuildLayoutImmediate(RootTransform);
 

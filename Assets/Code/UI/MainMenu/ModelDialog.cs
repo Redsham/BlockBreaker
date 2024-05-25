@@ -1,4 +1,3 @@
-using System;
 using ExternalResources;
 using ExternalResources.Data;
 using Gameplay;
@@ -33,7 +32,6 @@ namespace UI.MainMenu
 		private int m_LeanTweenBuy;
 
 		
-		private void Awake() => Initialize();
 		private void OnDestroy() => LeanTween.cancel(m_LeanTweenBuy);
 
 		public void Show(Model modelId)

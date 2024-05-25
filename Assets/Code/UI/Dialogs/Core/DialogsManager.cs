@@ -38,7 +38,7 @@ namespace UI.Dialogs.Core
 		public static T CreateDialog<T>() where T : DialogBox
 		{
 			T dialogBox = (T)Object.Instantiate(GetTemplate<T>(), DialogsContainer.Active.Root);
-			dialogBox.Initialize();
+			dialogBox.Initialize(true);
 			return dialogBox;
 		}
 		/// <summary>

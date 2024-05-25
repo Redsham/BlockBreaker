@@ -134,7 +134,6 @@ GameObject:
   - component: {fileID: 4966691}
   - component: {fileID: 4966693}
   - component: {fileID: 4966692}
-  - component: {fileID: 4966694}
   m_Layer: 5
   m_Name: Image
   m_TagString: Untagged
@@ -199,42 +198,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4966690}
   m_CullTransparentMesh: 1
---- !u!114 &4966694
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4966690}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7642587a7e5c8c94cad0ce6028096925, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_OnDown:
-    m_PersistentCalls:
-      m_Calls: []
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 2017579792}
-        m_TargetAssemblyTypeName: UI.MainMenu.FloatingMenuView, Assembly-CSharp
-        m_MethodName: ShowAds
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  m_OnUp:
-    m_PersistentCalls:
-      m_Calls: []
-  m_Background: {fileID: 0}
-  m_Text: {fileID: 0}
-  m_Thumbnail: {fileID: 0}
 --- !u!1 &59014860
 GameObject:
   m_ObjectHideFlags: 0
@@ -397,19 +360,7 @@ MonoBehaviour:
     type: 3}
   OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 860576944}
-        m_TargetAssemblyTypeName: UI.Home.HomeView, Assembly-CSharp
-        m_MethodName: SelectModel
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &846188613
 GameObject:
   m_ObjectHideFlags: 0
@@ -1534,6 +1485,58 @@ MonoBehaviour:
   m_Background: {fileID: 0}
   m_Text: {fileID: 0}
   m_Thumbnail: {fileID: 0}
+  m_SoundId: click
+  m_AnimationModule:
+    m_Content: {fileID: 1597234096}
+    m_SizeCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.85
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_RotationCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_Duration: 0.1
 --- !u!1 &1784587736
 GameObject:
   m_ObjectHideFlags: 0
@@ -1929,6 +1932,58 @@ MonoBehaviour:
   m_Background: {fileID: 0}
   m_Text: {fileID: 0}
   m_Thumbnail: {fileID: 0}
+  m_SoundId: click
+  m_AnimationModule:
+    m_Content: {fileID: 1906058123}
+    m_SizeCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0.85
+        inSlope: 0.37499994
+        outSlope: 0.37499994
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 0.4
+        value: 1
+        inSlope: 0.37499994
+        outSlope: 0.37499994
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_RotationCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 360
+        outSlope: 360
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0.33333334
+      - serializedVersion: 3
+        time: 1
+        value: 360
+        inSlope: 360
+        outSlope: 360
+        tangentMode: 34
+        weightedMode: 0
+        inWeight: 0.33333334
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    m_Duration: 0.5
 --- !u!1 &2017579785
 GameObject:
   m_ObjectHideFlags: 0

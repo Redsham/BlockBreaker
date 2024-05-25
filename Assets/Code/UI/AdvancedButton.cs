@@ -1,7 +1,9 @@
 using TMPro;
+using UI.Audio;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace UI
@@ -38,6 +40,10 @@ namespace UI
 		[SerializeField] private Image m_Background;
 		[SerializeField] private TextMeshProUGUI m_Text;
 		[SerializeField] private Image m_Thumbnail;
+
+		[Header("Behaviour")] [SerializeField] 
+		private string m_SoundId = "click";
+		[SerializeField] private AnimationModule m_AnimationModule;
 		
 		
 		
@@ -53,8 +59,51 @@ namespace UI
 				m_Thumbnail = GetComponentInChildren<Image>();
 		}
 
-		public void OnPointerClick(PointerEventData eventData) => m_OnClick.Invoke();
+		public void OnPointerClick(PointerEventData eventData)
+		{
+			if(!string.IsNullOrEmpty(m_SoundId))
+				UISounds.Play(m_SoundId);
+			
+			m_AnimationModule.Play();
+			m_OnClick.Invoke();
+		}
 		public void OnPointerDown(PointerEventData eventData) => m_OnDown.Invoke();
 		public void OnPointerUp(PointerEventData eventData) => m_OnUp.Invoke();
+
+		[System.Serializable]
+		public class AnimationModule
+		{
+			[SerializeField] private RectTransform m_Content;
+			[SerializeField] private AnimationCurve m_SizeCurve = AnimationCurve.EaseInOut(0.0f, 0.85f, 1.0f, 1.0f);
+			[SerializeField] private AnimationCurve m_RotationCurve = AnimationCurve.Constant(0.0f, 1.0f, 1.0f);
+			[SerializeField] private float m_Duration = 0.1f;
+			
+			private int m_LeanTweenId;
+			
+
+			public void Play()
+			{
+				if(m_LeanTweenId == 0 && m_Content == null)
+					return;
+				
+				LeanTween.cancel(m_LeanTweenId);
+
+				float sizeDuration = m_SizeCurve.keys[^1].time;
+				float rotationDuration = m_RotationCurve.keys[^1].time;
+
+				m_LeanTweenId = LeanTween.value(
+					m_Content.gameObject,
+					(float time) =>
+					{
+						
+						float size = m_SizeCurve.Evaluate(sizeDuration * time);
+						m_Content.localScale = new Vector3(size, size, 1.0f);
+						
+						float rotation = m_RotationCurve.Evaluate(rotationDuration * time);
+						m_Content.eulerAngles = new Vector3(0.0f, 0.0f, rotation);
+						
+					}, 0.0f, 1.0f, m_Duration).id;
+			}
+		}
 	}
 }

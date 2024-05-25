@@ -11,8 +11,6 @@ namespace UI.MainMenu
 
 		private void Awake()
 		{
-			Initialize();
-			
 			FillSocial();
 			m_SocialBttnTemplate.gameObject.SetActive(false);
 		}

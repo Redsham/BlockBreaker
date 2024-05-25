@@ -39,6 +39,8 @@ namespace UI
 		[SerializeField] private TextMeshProUGUI m_Text;
 		[SerializeField] private Image m_Thumbnail;
 		
+		
+		
 		private void Awake()
 		{
 			if (m_Background == null)

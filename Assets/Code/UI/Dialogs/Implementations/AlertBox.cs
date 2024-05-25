@@ -13,7 +13,7 @@ namespace UI.Dialogs.Implementations
 		[SerializeField] private TextMeshProUGUI     m_TitleText;
 		[SerializeField] private TextMeshProUGUI     m_BodyText;
 		[SerializeField] private Image               m_Icon;
-		[SerializeField] private Button              m_Button;
+		[SerializeField] private AdvancedButton      m_Button;
 		
 		[Header("Styles")]
 		[SerializeField] private List<AlertBoxStyle> m_Styles;
@@ -21,7 +21,7 @@ namespace UI.Dialogs.Implementations
 
 		private void Awake()
 		{
-			m_Button.onClick.AddListener(() =>
+			m_Button.OnClick.AddListener(() =>
 			{
 				UISounds.Play("click");
 				Close();
@@ -50,7 +50,7 @@ namespace UI.Dialogs.Implementations
 				m_Icon.color = style.MainColor;
 			}
 			
-			m_Button.image.color = style.MainColor;
+			m_Button.Background.color = style.MainColor;
 			
 			m_TitleText.horizontalAlignment = hasIcon ? HorizontalAlignmentOptions.Center : HorizontalAlignmentOptions.Left;
 			m_BodyText.horizontalAlignment  = hasIcon ? HorizontalAlignmentOptions.Center : HorizontalAlignmentOptions.Left;

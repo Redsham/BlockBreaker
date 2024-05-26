@@ -53,18 +53,21 @@ namespace UI.Dialogs.Core
 			Color backgroundColor = Background.color;
 			backgroundColor.a = 0.0f;
 			Background.color = backgroundColor;
-			LeanTween.alpha(Background.rectTransform, 0.9f, 0.1f);
+			LeanTween.alpha(Background.rectTransform, 0.9f, 0.1f)
+				.setOnComplete(() => Background.color = new Color(backgroundColor.r, backgroundColor.g, backgroundColor.b, 0.9f));
 			
 			Content.alpha = 0.0f;
 			LeanTween.alphaCanvas(Content, 1.0f, 0.1f)
 				.setEaseInQuad()
-				.setDelay(0.05f);
+				.setDelay(0.05f)
+				.setOnComplete(() => Content.alpha = 1.0f);
 			
 			RectTransform contentTransform = (RectTransform)Content.transform;
 			contentTransform.anchoredPosition = new Vector2(0.0f, -100.0f);
 			LeanTween.moveY(contentTransform, 0.0f, 0.1f)
 				.setEaseInQuad()
-				.setDelay(0.05f);
+				.setDelay(0.05f)
+				.setOnComplete(() => contentTransform.anchoredPosition = Vector2.zero);
 
 			#endregion
 			

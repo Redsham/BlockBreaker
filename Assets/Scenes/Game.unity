@@ -766,8 +766,9 @@ MonoBehaviour:
   m_Background: {fileID: 0}
   m_Text: {fileID: 0}
   m_Thumbnail: {fileID: 0}
+  m_SoundId: click
   m_AnimationModule:
-    m_Content: {fileID: 1066444202}
+    m_Content: {fileID: 887119714}
     m_SizeCurve:
       serializedVersion: 2
       m_Curve:
@@ -976,8 +977,9 @@ MonoBehaviour:
   m_Background: {fileID: 0}
   m_Text: {fileID: 0}
   m_Thumbnail: {fileID: 0}
+  m_SoundId: click
   m_AnimationModule:
-    m_Content: {fileID: 0}
+    m_Content: {fileID: 1006330365}
     m_SizeCurve:
       serializedVersion: 2
       m_Curve:

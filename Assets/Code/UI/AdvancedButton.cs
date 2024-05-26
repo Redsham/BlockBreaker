@@ -32,17 +32,17 @@ namespace UI
 		
 
 		[Header("Events")]
-		[SerializeField] private UnityEvent m_OnDown = new();
-		[SerializeField] private UnityEvent m_OnClick = new();
-		[SerializeField] private UnityEvent m_OnUp = new();
+		[SerializeField] private UnityEvent m_OnDown = new UnityEvent();
+		[SerializeField] private UnityEvent m_OnClick = new UnityEvent();
+		[SerializeField] private UnityEvent m_OnUp = new UnityEvent();
 		
 		[Header("Components")]
 		[SerializeField] private Image m_Background;
 		[SerializeField] private TextMeshProUGUI m_Text;
 		[SerializeField] private Image m_Thumbnail;
 
-		[Header("Behaviour")] [SerializeField] 
-		private string m_SoundId = "click";
+		[Header("Behaviour")] 
+		[SerializeField] private string m_SoundId = "click";
 		[SerializeField] private AnimationModule m_AnimationModule;
 		
 		
@@ -70,6 +70,8 @@ namespace UI
 		public void OnPointerDown(PointerEventData eventData) => m_OnDown.Invoke();
 		public void OnPointerUp(PointerEventData eventData) => m_OnUp.Invoke();
 
+		
+		
 		[System.Serializable]
 		public class AnimationModule
 		{

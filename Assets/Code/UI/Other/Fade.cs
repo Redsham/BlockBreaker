@@ -43,11 +43,13 @@ namespace UI.Other
 			sequence.append(LeanTween.alphaCanvas(m_CanvasGroup, 1.0f, 0.5f).setEaseInBack());
 			sequence.append(() =>
 			{
+				m_CanvasGroup.alpha = 1.0f;
 				onComplete?.Invoke();
 			});
 			sequence.append(LeanTween.alphaCanvas(m_CanvasGroup, 0.0f, 0.5f).setEaseOutBack());
 			sequence.append(() =>
 			{
+				m_CanvasGroup.alpha = 0.0f;
 				Destroy(gameObject);
 			});
 		}
